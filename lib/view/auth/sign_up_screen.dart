@@ -18,6 +18,7 @@ class _SignUPScreenState extends State<SignUPScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
+  final TextEditingController confirmPassCon = TextEditingController();
 
 
   @override
@@ -73,55 +74,33 @@ class _SignUPScreenState extends State<SignUPScreen> {
                 fillColor: Color(0xFFFFFFFF),
                 fieldBorderColor: AppColors.borderColor,
               ),
-              SizedBox(height: 8.h),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GestureDetector(
-                    onTap: () => setState(() => agree = !agree),
-                    child: Container(
-                      height: 18.h,
-                      width: 18.w,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.subHeadingColor, width: 1.5),
-                        borderRadius: BorderRadius.circular(2),
-                        color: agree ? AppColors.subHeadingColor : Colors.transparent,
-                      ),
-                      child: agree
-                          ? SvgPicture.asset(
-                        "assets/icons/Vector (1).svg",
-                        height: 14.h,
-                        width: 14.w,
-                        color: Colors.white,
-                      )
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    'Remember me',
-                    style: GoogleFonts.inter(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF737373),
-                    ),
-                  ),
-                  Spacer(),
-                  InkWell(
-                    onTap: (){
-
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFFFF5C5C),
-                      ),
-                    ),
-                  ),
-                ],
+              SizedBox(height: 12.h),
+              CustomTextField(
+                textEditingController: passController,
+                hintText: 'Password',
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.sp,
+                  color: AppColors.subHeadingColor,
+                ),
+                isPassword: true,
+                fillColor: Color(0xFFFFFFFF),
+                fieldBorderColor: AppColors.borderColor,
               ),
+              SizedBox(height: 12.h),
+              CustomTextField(
+                textEditingController: confirmPassCon,
+                hintText: 'Confirm Password',
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.sp,
+                  color: AppColors.subHeadingColor,
+                ),
+                isPassword: true,
+                fillColor: Color(0xFFFFFFFF),
+                fieldBorderColor: AppColors.borderColor,
+              ),
+
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.030),
               GestureDetector(
@@ -145,145 +124,6 @@ class _SignUPScreenState extends State<SignUPScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-
-              SizedBox(height: MediaQuery.of(context).size.height * 0.030),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 1.5,
-                      color: Color(0xFFB1B1B1),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Text(
-                      "Or Continue With",
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF303030),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 1.5,
-                      color: Color(0xFFB1B1B1),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: MediaQuery.of(context).size.height * 0.030),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Google Button
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFF0B0E12).withOpacity(0.20),
-                          offset: Offset(0, 2),
-                          blurRadius: 4,
-                        )
-                      ],
-                    ),
-                    child: IconButton(
-                      onPressed: () async {
-
-                      },
-                      icon: SvgPicture.asset(AppIcons.googleIcon, width: 20, height: 20),
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
-                    ),
-                  ),
-
-                  SizedBox(width: 10.w),
-
-                  // apple Button
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFF0B0E12).withOpacity(0.20),
-                          offset: Offset(0, 2),
-                          blurRadius: 4,
-                        )
-                      ],
-                    ),
-                    child: IconButton(
-                      onPressed: () async {
-
-                      },
-                      icon: SvgPicture.asset(AppIcons.appleIcon, width: 20, height: 20),
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
-                    ),
-                  ),
-
-                  SizedBox(width: 10.w),
-
-                  // Facebook Button
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFF0B0E12).withOpacity(0.20),
-                          offset: Offset(0, 2),
-                          blurRadius: 4,
-                        )
-                      ],
-                    ),
-                    child: IconButton(
-                      onPressed: () async {
-
-                      },
-                      icon: SvgPicture.asset(AppIcons.fbIcon, width: 20, height: 20),
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.030),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don’t have an account? ",
-                      style: GoogleFonts.inter(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF2B2B2B),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: (){
-
-                      },
-                      child: Text(
-                        "Sign Up",
-                        style: GoogleFonts.inter(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF2B2B2B),
-                        ),
-                      ),
-                    ),
-                  ]
               ),
 
             ],
