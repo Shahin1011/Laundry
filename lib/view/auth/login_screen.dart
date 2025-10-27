@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Spacer(),
                   InkWell(
                     onTap: (){
-
+                      Get.toNamed(AppRoutes.forgotPasswordScreen);
                     },
                     child: Text(
                       'Forgot Password?',
