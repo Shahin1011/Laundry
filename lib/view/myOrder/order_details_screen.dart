@@ -21,7 +21,7 @@ class OrderDetailsScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.mainAppColor,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -26,6 +26,7 @@ class _OTPScreenState extends State<OTPScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -37,7 +38,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       onTap: (){
                         Navigator.pop(context);
                       },
-                      child: SvgPicture.asset("assets/icons/backIcon.svg"),
+                      child: SvgPicture.asset("assets/icons/backIcon.svg", width: 24.w, height: 24.h),
                     ),
                     Text(
                       "Forgot Password",
@@ -76,7 +77,7 @@ class _OTPScreenState extends State<OTPScreen> {
             
                 GestureDetector(
                   onTap: (){
-            
+                    Get.toNamed(AppRoutes.newPasswordScreen);
                   },
                   child: Container(
                     width: double.infinity,
@@ -141,6 +142,8 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                   ),
                 ),
+
+                SizedBox(height: MediaQuery.of(context).size.height * 0.030),
             
               ],
             ),
@@ -156,12 +159,12 @@ class _OTPScreenState extends State<OTPScreen> {
       length: 6,
       enableActiveFill: true,
       showCursor: true,
-      cursorColor: AppColors.textColor_01,
+      cursorColor: AppColors.mainAppColor,
       obscureText: false,
       textStyle: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w500,
-        color: AppColors.textColor_01,
+        color: AppColors.mainAppColor,
         //fontFamily: "Satoshi",
       ),
       controller: pinController,
@@ -169,18 +172,18 @@ class _OTPScreenState extends State<OTPScreen> {
       keyboardType: TextInputType.number,
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.box,
-        borderRadius: BorderRadius.circular(4),
-        borderWidth: 0,
+        borderRadius: BorderRadius.circular(8),
+        borderWidth: 0.5,
         fieldHeight: 45.h,
         fieldWidth: 45.w,
         fieldOuterPadding: EdgeInsets.symmetric(horizontal: 4),
-        inactiveColor: AppColors.borderColor,
+        inactiveColor: Color(0xFF5E5E5E),
         inactiveFillColor: AppColors.white,
         selectedFillColor: Colors.white,
         disabledColor: AppColors.white,
         activeFillColor: Colors.white,
-        selectedColor: AppColors.textColor_01,
-        activeColor: AppColors.textColor_01,
+        selectedColor: AppColors.mainAppColor,
+        activeColor: AppColors.mainAppColor,
       ),
       hintCharacter: '-',
       animationDuration: const Duration(milliseconds: 100),

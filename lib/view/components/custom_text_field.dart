@@ -88,10 +88,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       textInputAction: widget.textInputAction,
       cursorColor: widget.cursorColor,
       style: widget.inputTextStyle ??
-          GoogleFonts.poppins(
-            fontSize: 12.5,
+          GoogleFonts.inter(
+            fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppColors.textColor_01,
+            color: AppColors.mainAppColor,
           ),
       onChanged: widget.onChanged,
       obscuringCharacter: ".",
@@ -103,8 +103,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           hintText: widget.hintText,
           hintStyle: widget.hintStyle ??
               GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.borderColor),
           fillColor: widget.fillColor,
           filled: true,

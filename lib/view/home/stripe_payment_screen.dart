@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_colors.dart';
 import '../../helpers/route.dart';
@@ -18,33 +19,34 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [
             // Header
             Container(
-              height: 60.h,
+              height: MediaQuery.of(context).size.height * 0.13,
               color: AppColors.mainAppColor,
+              padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(width: 16.w),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Choose a Payment Method',
-                        style: GoogleFonts.inter(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                    child: SvgPicture.asset(
+                      "assets/icons/backIcon.svg",
+                      width: 24.w,
+                      height: 24.h,
+                      color: AppColors.white,
                     ),
                   ),
-                  SizedBox(width: 40.w),
+                  Text(
+                    'Payment Method',
+                    style: GoogleFonts.inter(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(),
                 ],
               ),
             ),
@@ -91,7 +93,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 

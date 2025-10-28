@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../helpers/route.dart';
 import '../../../utils/app_colors.dart';
+import 'package:get/get.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   const HomeHeaderWidget({super.key});
@@ -72,18 +74,23 @@ class HomeHeaderWidget extends StatelessWidget {
                 ),
                 Spacer(),
                 // Notification Icon
-                Container(
-                  width: 38.w,
-                  height: 38.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.2),
-                    border: Border.all(color: Colors.white, width: 1),
-                  ),
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    color: Colors.white,
-                    size: 20.sp,
+                GestureDetector(
+                  onTap: (){
+                    Get.toNamed(AppRoutes.notificationScreen);
+                  },
+                  child: Container(
+                    width: 38.w,
+                    height: 38.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                      border: Border.all(color: Colors.white, width: 1),
+                    ),
+                    child: Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
                   ),
                 ),
               ],

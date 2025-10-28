@@ -56,10 +56,9 @@ class MyOrderCard extends StatelessWidget{
           SizedBox(height: 12.h),
           Text(
             "clean, iron, fold, and deliver your clothes with care!",
-            style: TextStyle(
-              fontFamily: 'Prompt_regular',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
+            style: GoogleFonts.inter(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
               color: Color(0xFF757575),
             ),
             maxLines: 3,
@@ -72,7 +71,7 @@ class MyOrderCard extends StatelessWidget{
               Text(
                 "Price: \$$price",
                 style: GoogleFonts.inter(
-                  fontSize: 12.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                   color: AppColors.mainAppColor,
                 ),
@@ -80,13 +79,16 @@ class MyOrderCard extends StatelessWidget{
               Text(
                 status,
                 style: GoogleFonts.inter(
-                  fontSize: 11.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF45DE6E),
+                  color: status == "Completed"
+                      ? const Color(0xFF45DE6E)
+                      : const Color(0xFF9A9A10),
                 ),
               ),
             ],
           ),
+
           SizedBox(height: 12.h),
 
           Align(
@@ -105,7 +107,7 @@ class MyOrderCard extends StatelessWidget{
                   "Details",
                   style: GoogleFonts.inter(
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.white,
                   ),
                 ),

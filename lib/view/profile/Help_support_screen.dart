@@ -30,35 +30,30 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
             decoration: BoxDecoration(
               color: AppColors.mainAppColor,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: 60),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: SvgPicture.asset(
-                        "assets/icons/backIcon.svg",
-                        width: 24.w,
-                        height: 24.h,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    Text(
-                      "Help & Support",
-                      style: GoogleFonts.inter(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    const SizedBox(),
-                  ],
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: SvgPicture.asset(
+                    "assets/icons/backIcon.svg",
+                    width: 24.w,
+                    height: 24.h,
+                    color: AppColors.white,
+                  ),
                 ),
+                Text(
+                  "Help & Support",
+                  style: GoogleFonts.inter(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.white,
+                  ),
+                ),
+                const SizedBox(),
               ],
             ),
           ),

@@ -21,6 +21,7 @@ class MyOrderScreen extends StatelessWidget {
               color: AppColors.mainAppColor,
             ),
             alignment: Alignment.center,
+            padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
             child: Text(
               "My Orders",
               style: GoogleFonts.inter(

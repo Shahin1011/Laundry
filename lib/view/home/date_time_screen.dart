@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../components/custom_date_picker_sheet.dart';
@@ -33,36 +34,34 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [
             // Header
             Container(
-              height: 60.h,
+              height: MediaQuery.of(context).size.height * 0.13,
               color: AppColors.mainAppColor,
+              padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(width: 16.w),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back,
+                    child: SvgPicture.asset(
+                      "assets/icons/backIcon.svg",
+                      width: 24.w,
+                      height: 24.h,
+                      color: AppColors.white,
+                    ),
+                  ),
+                  Text(
+                    'Date & Time',
+                    style: GoogleFonts.inter(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Date & time',
-                        style: GoogleFonts.inter(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 40.w),
+                  SizedBox(),
                 ],
               ),
             ),
@@ -226,7 +225,6 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 

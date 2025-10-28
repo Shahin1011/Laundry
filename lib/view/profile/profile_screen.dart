@@ -30,22 +30,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               color: AppColors.mainAppColor,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 60),
-                Center(
-                  child: Text(
-                    "Profile",
-                    style: GoogleFonts.inter(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.white,
-                    ),
-                  ),
-                )
-              ],
-            ),
+              padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
+            child: Center(
+              child: Text(
+                "Profile",
+                style: GoogleFonts.inter(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.white,
+                ),
+              ),
+            )
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -201,7 +196,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           SizedBox(height: 16.h),
                           GestureDetector(
-                            onTap: (){},
+                            onTap: (){
+                              Get.offAllNamed(AppRoutes.loginScreen);
+                            },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

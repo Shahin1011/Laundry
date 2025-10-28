@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../view/auth/forgot_password_screen.dart';
 import '../view/auth/login_screen.dart';
+import '../view/auth/new_password_screen.dart';
 import '../view/auth/otp_screen.dart';
 import '../view/auth/sign_up_screen.dart';
 import '../view/home/choice_package_screen.dart';
@@ -8,6 +9,7 @@ import '../view/bottom_nav/bottom_nav.dart';
 import '../view/home/home_screen.dart';
 import '../view/home/information_screen.dart';
 import '../view/home/date_time_screen.dart';
+import '../view/home/notification_screen.dart';
 import '../view/home/payment_screen.dart';
 import '../view/home/success_screen.dart';
 import '../view/home/stripe_payment_screen.dart';
@@ -33,6 +35,7 @@ class AppRoutes {
   static const String loginScreen = "/login_screen";
   static const String forgotPasswordScreen = "/forgot_password_screen";
   static const String oTPScreen = "/otp_screen";
+  static const String newPasswordScreen = "/new_password_screen";
   static const String signUPScreen = "/sign_up_screen";
   static const String homeScreen = "/home_screen";
   static const String myOrderScreen = "/myOreder_screen";
@@ -48,6 +51,7 @@ class AppRoutes {
   static const String helpAndSupportScreen = "/Help_support_screen";
   static const String contractUsScreen = "/contract_us_screen";
   static const String orderDetailsScreen = "/order_details_screen";
+  static const String notificationScreen = "/notification_screen";
 
   static List<GetPage> routes = [
 
@@ -58,6 +62,7 @@ class AppRoutes {
     GetPage(name: loginScreen, page: () => LoginScreen()),
     GetPage(name: forgotPasswordScreen, page: () => ForgotPasswordScreen()),
     GetPage(name: oTPScreen, page: () => OTPScreen()),
+    GetPage(name: newPasswordScreen, page: () => NewPasswordScreen()),
     GetPage(name: signUPScreen, page: () => SignUPScreen()),
     GetPage(name: homeScreen, page: () => HomeScreen()),
     GetPage(name: myOrderScreen, page: () => MyOrderScreen()),
@@ -73,6 +78,7 @@ class AppRoutes {
     GetPage(name: helpAndSupportScreen, page: () => HelpAndSupportScreen()),
     GetPage(name: contractUsScreen, page: () => ContractUsScreen()),
     GetPage(name: orderDetailsScreen, page: () => OrderDetailsScreen()),
+    GetPage(name: notificationScreen, page: () => NotificationScreen()),
 
   ];
 }
