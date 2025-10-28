@@ -224,32 +224,6 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                 ),
               ),
             ),
-            
-            // Bottom Navigation
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    offset: Offset(0, -2),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(icon: Icons.home_outlined, label: 'Home', isActive: true),
-                    _buildNavItem(icon: Icons.content_paste_outlined, label: 'My Order', isActive: false),
-                    _buildNavItem(icon: Icons.person_outline, label: 'Profile', isActive: false),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

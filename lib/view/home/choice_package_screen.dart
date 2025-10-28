@@ -23,12 +23,11 @@ class _ChoicePackageScreenState extends State<ChoicePackageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [
             // Header
             Container(
-              height: 60.h,
+              height: MediaQuery.of(context).size.height * 0.13,
               color: AppColors.mainAppColor,
               child: Row(
                 children: [
@@ -122,35 +121,9 @@ class _ChoicePackageScreenState extends State<ChoicePackageScreen> {
                 ),
               ),
             ),
-            
-            // Bottom Navigation
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              decoration: BoxDecoration(
-                color: Color(0xFFF5F5F5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    offset: Offset(0, -2),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(icon: Icons.home_outlined, label: 'Home', isActive: false),
-                    _buildNavItem(icon: Icons.content_paste_outlined, label: 'My Order', isActive: false),
-                    _buildNavItem(icon: Icons.person_outline, label: 'Profile', isActive: false),
-                  ],
-                ),
-              ),
-            ),
+
           ],
         ),
-      ),
     );
   }
 

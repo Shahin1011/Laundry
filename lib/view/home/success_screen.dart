@@ -40,7 +40,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
 
   void _goHome(BuildContext context) {
     _timer?.cancel();
-    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.homeScreen, (route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.bottomNavScreen, (route) => false);
   }
 
   @override

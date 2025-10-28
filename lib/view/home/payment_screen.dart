@@ -142,32 +142,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
             ),
-
-            // Bottom Navigation
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    offset: const Offset(0, -2),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
-                    _BottomNavItem(icon: Icons.home_outlined, label: 'Home', isActive: true),
-                    _BottomNavItem(icon: Icons.content_paste_outlined, label: 'My Order'),
-                    _BottomNavItem(icon: Icons.person_outline, label: 'Profile'),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
