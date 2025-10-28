@@ -54,15 +54,14 @@ class NotificationScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: 2,
+                padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                itemCount: 20,
                 itemBuilder: (context, index) {
                   return NotificationCard(
                     timeAndDate: '1 day ago',
                     description: 'Your delivery has been successfully completed!',
                   );
                 },
-
               ),
             ),
           ),

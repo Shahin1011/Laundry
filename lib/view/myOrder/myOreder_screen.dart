@@ -35,9 +35,9 @@ class MyOrderScreen extends StatelessWidget {
           // 🔹 Order List (Expanded must be direct child of Column)
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
               child: ListView.builder(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
                 itemCount: 20,
                 itemBuilder: (context, index) {
                   return MyOrderCard(

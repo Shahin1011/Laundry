@@ -52,6 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
               fontSize: 47.sp,
               fontWeight: FontWeight.w500,
               color: AppColors.mainAppColor,
+              height: 0.7
             ),
           )
         ],
