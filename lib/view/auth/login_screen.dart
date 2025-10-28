@@ -104,13 +104,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 18.h,
                       width: 18.w,
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.subHeadingColor, width: 1.5),
+                        border: Border.all(color: AppColors.mainAppColor, width: 1.5),
                         borderRadius: BorderRadius.circular(2),
-                        color: agree ? AppColors.subHeadingColor : Colors.transparent,
+                        color: agree ? AppColors.mainAppColor : Colors.transparent,
                       ),
                       child: agree
                           ? SvgPicture.asset(
-                        "assets/icons/Vector (1).svg",
+                        "assets/icons/checkIcon.svg",
                         height: 14.h,
                         width: 14.w,
                         color: Colors.white,
@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: MediaQuery.of(context).size.height * 0.030),
               GestureDetector(
                 onTap: (){
-                  Get.offNamed(AppRoutes.homeScreen);
+                  Get.offNamed(AppRoutes.bottomNavScreen);
                 },
                 child: Container(
                   width: double.infinity,
