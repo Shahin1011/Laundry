@@ -57,27 +57,33 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               spreadRadius: 0,
             ),
           ],
+          border: const Border(
+            top: BorderSide(
+              color: Color(0xFFEAEAEA),
+              width: 1.5,
+            ),
+          ),
         ),
         height: 95.h,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           currentIndex: selectedIndex,
-          selectedItemColor: AppColors.buttonColor,
+          selectedItemColor: AppColors.mainAppColor,
           selectedLabelStyle: TextStyle(
             fontFamily: 'SegeoUi_bold',
             fontWeight: FontWeight.w700,
             fontSize: 12.sp,
-            color: AppColors.buttonColor,
+            color: AppColors.mainAppColor,
           ),
           unselectedLabelStyle: TextStyle(
             fontFamily: 'SegeoUi_bold',
             fontWeight: FontWeight.w600,
             fontSize: 12.sp,
-            color: AppColors.textColor,
+            color: AppColors.foundationColor,
           ),
           showSelectedLabels: true,
-          unselectedItemColor: AppColors.textColor,
+          unselectedItemColor: AppColors.foundationColor,
           backgroundColor: Colors.white,
           onTap: navigationItemTap,
           items: _navItems,
@@ -95,8 +101,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
     final bool isSelected = selectedIndex == index;
     final Color iconColor = isSelected
-        ? AppColors.buttonColor
-        : AppColors.textColor;
+        ? AppColors.mainAppColor
+        : AppColors.foundationColor;
 
     return BottomNavigationBarItem(
       // 🎯 FIX: Removed the unnecessary Column and SizedBox(height: 10.h)
