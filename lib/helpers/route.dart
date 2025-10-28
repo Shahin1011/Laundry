@@ -7,6 +7,9 @@ import '../view/bottom_nav/bottom_nav.dart';
 import '../view/home/home_screen.dart';
 import '../view/myOrder/myOreder_screen.dart';
 import '../view/myOrder/order_details_screen.dart';
+import '../view/profile/Help_support_screen.dart';
+import '../view/profile/contract_us_screen.dart';
+import '../view/profile/edit_profile_screen.dart';
 import '../view/profile/profile_screen.dart';
 import '../view/splash/location_screen.dart';
 import '../view/splash/onboarding_screen.dart';
@@ -28,6 +31,9 @@ class AppRoutes {
   static const String homeScreen = "/home_screen";
   static const String myOrderScreen = "/myOreder_screen";
   static const String profileScreen = "/profile_screen";
+  static const String editProfileScreen = "/edit_profile_screen";
+  static const String helpAndSupportScreen = "/Help_support_screen";
+  static const String contractUsScreen = "/contract_us_screen";
   static const String orderDetailsScreen = "/order_details_screen";
 
   static List<GetPage> routes = [
@@ -43,6 +49,9 @@ class AppRoutes {
     GetPage(name: homeScreen, page: () => HomeScreen()),
     GetPage(name: myOrderScreen, page: () => MyOrderScreen()),
     GetPage(name: profileScreen, page: () => ProfileScreen()),
+    GetPage(name: editProfileScreen, page: () => EditProfileScreen()),
+    GetPage(name: helpAndSupportScreen, page: () => HelpAndSupportScreen()),
+    GetPage(name: contractUsScreen, page: () => ContractUsScreen()),
     GetPage(name: orderDetailsScreen, page: () => OrderDetailsScreen()),
 
   ];

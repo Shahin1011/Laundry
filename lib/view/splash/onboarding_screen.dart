@@ -79,7 +79,7 @@ class OnboardingScreen extends StatelessWidget{
                   ),
                   InkWell(
                     onTap: (){
-
+                      Get.offAllNamed(AppRoutes.loginScreen);
                     },
                     child: Text(
                       "Login",
