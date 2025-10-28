@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: MediaQuery.of(context).size.height * 0.030),
               GestureDetector(
                 onTap: (){
-                  Get.offNamed(AppRoutes.homeScreen);
+                  Get.offNamed(AppRoutes.bottomNavScreen);
                 },
                 child: Container(
                   width: double.infinity,
