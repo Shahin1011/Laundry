@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
+import '../../../helpers/route.dart';
 
 class LaundryServiceCard extends StatelessWidget {
   const LaundryServiceCard({super.key});
@@ -57,21 +59,26 @@ class LaundryServiceCard extends StatelessWidget {
                 ),
                 SizedBox(height: 24.h),
                 // Button
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.mainAppColor,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    'Choice Package',
-                    style: GoogleFonts.inter(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.choicePackageScreen);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.mainAppColor,
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      'Choice Package',
+                      style: GoogleFonts.inter(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
