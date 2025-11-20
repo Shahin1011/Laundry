@@ -56,7 +56,7 @@ class RecentOrderCard extends StatelessWidget {
             children: [
               // Completed progress (teal) - approximately 65% of width
               Expanded(
-                flex: 65,
+                flex: 60,
                 child: Container(
                   height: 10.h,
                   decoration: BoxDecoration(

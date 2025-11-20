@@ -46,7 +46,6 @@ class MyOrderScreen extends StatelessWidget {
                     status: index.isEven ? "Completed" : "Pending",
                   );
                 },
-
               ),
             ),
           ),

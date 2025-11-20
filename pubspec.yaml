@@ -41,6 +41,7 @@ dependencies:
   google_fonts: ^6.2.1
   pin_code_fields: ^8.0.1
   image_picker: ^1.2.0
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +90,6 @@ flutter:
     - family: Prompt_Bold
       fonts:
         - asset: assets/font/Prompt-Bold.ttf
-  #
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
