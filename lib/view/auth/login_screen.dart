@@ -3,12 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:laundry/helpers/route.dart';
+import 'package:laundry/utils/app_contants.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_icons.dart';
+import '../../utils/token_service.dart';
 import '../components/custom_text_field.dart';
 import 'package:get/get.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -25,89 +30,70 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  Future<bool> hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
 
-  // Replace with your actual login API endpoint
-  final String loginApiUrl = "https://crafts-duration-prompt-beverage.trycloudflare.com/api/auth/login";
+  Future<void> _loginUser(String email, String password) async {
+    final loginApiUrl = "${AppConstants.BASE_URL}/api/auth/login";
 
-  Future<void> _loginUser() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      isLoading = true;
-    });
+    if (!await hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    final body = {
+      'email': email,
+      'password': password,
+    };
+
+    setState(() { isLoading = true; });
 
     try {
       final response = await http.post(
         Uri.parse(loginApiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          "emailOrPhone": emailController.text.trim(),
-          "password": passController.text,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: jsonEncode(body),
       );
 
-      setState(() {
-        isLoading = false;
-      });
+      final data = json.decode(response.body);
 
-      if (response.statusCode == 200) {
-        // Success
-        final responseData = json.decode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
 
         Get.snackbar(
           'Success',
-          'Login successful!',
+          data["message"] ?? "Login successfully!",
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
 
-        // Navigate to main screen
+        /// Save the token
+        String accessToken = data['data']['accessToken'];
+        await TokenService().saveToken(accessToken);
+
+        /// Save email/password if user checked "Remember me"
+        if (agree) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString("email", email);
+          await prefs.setString("password", password);
+        }
         Get.offNamed(AppRoutes.bottomNavScreen);
 
-        // TODO: Save user token/data to shared preferences
-        // await storage.write(key: 'token', value: responseData['token']);
-
       } else {
-        // Error handling
-        final errorData = json.decode(response.body);
-        Get.snackbar(
-          'Error',
-          errorData['message'] ?? 'Login failed',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar("Error", data['message'] ?? "Login failed",
+            backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      Get.snackbar(
-        'Error',
-        'Network error: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() { isLoading = false; });
     }
   }
 
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter email or phone number';
-    }
-    return null;
-  }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter password';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +148,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       fillColor: const Color(0xFFFFFFFF),
                       fieldBorderColor: AppColors.borderColor,
-                      validator: _validateEmail,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter an email";
+                        } else if (!RegExp(
+                            r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                            .hasMatch(value)) {
+                          return "Please enter a valid email";
+                        }
+                        return null;
+                      },
                       keyboardType: TextInputType.emailAddress,
                     ),
                     SizedBox(height: 16.h),
@@ -187,7 +182,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       isPassword: true,
                       fillColor: const Color(0xFFFFFFFF),
                       fieldBorderColor: AppColors.borderColor,
-                      validator: _validatePassword,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter your password";
+                        } else if (value.length < 6) {
+                          return "Password must be at least 6 characters";
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 8.h),
                     Row(
@@ -241,7 +243,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: MediaQuery.of(context).size.height * 0.030),
                     GestureDetector(
-                      onTap: isLoading ? null : _loginUser,
+                      onTap: isLoading
+                          ? null
+                          : () {
+                        _loginUser(
+                          emailController.text.trim(),
+                          passController.text.trim(),
+                        );
+                      },
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -401,7 +410,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ]
                     ),
-
                     SizedBox(height: MediaQuery.of(context).size.height * 0.030),
 
                   ],

@@ -1,11 +1,17 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:laundry/helpers/route.dart';
+import 'package:laundry/view/auth/login_screen.dart';
 import '../../utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
+import '../../utils/app_contants.dart';
+
 
 class OTPScreen extends StatefulWidget{
   const OTPScreen({super.key});
@@ -16,7 +22,81 @@ class OTPScreen extends StatefulWidget{
 
 class _OTPScreenState extends State<OTPScreen> {
 
+  late String email;
+  late String nextScreen;
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    email = args["email"];
+    nextScreen = args["nextScreen"];
+  }
+
+
+  bool isLoading = false;
   final TextEditingController pinController = TextEditingController();
+
+  Future<bool> hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<bool> verifyUser(String email, String code) async {
+    final url = "${AppConstants.BASE_URL}/api/auth/verify-otp";
+
+    if (!await hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return false;
+    }
+
+    final body = {'emailOrPhone': email, 'otp': code};
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "OTP Verified successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        if(nextScreen == "login"){
+          Get.off(() => LoginScreen());
+        }else if (nextScreen == "resetPassword"){
+          Get.offAllNamed(AppRoutes.newPasswordScreen);
+        }
+
+        return true;
+      } else {
+        String message = "Code wrong";
+        try {
+          final body = jsonDecode(response.body);
+          message = body['message'] ?? message;
+        } catch (_) {}
+        Get.snackbar("Failed", message);
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+      return false;
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +144,9 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  "We’ve sent a 6-digit code to j***@gmail.com",
+                  "We’ve sent a 6-digit code to $email",
                   style: GoogleFonts.inter(
-                    fontSize: 14.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF3C3C3C),
                   ),
@@ -77,7 +157,8 @@ class _OTPScreenState extends State<OTPScreen> {
             
                 GestureDetector(
                   onTap: (){
-                    Get.toNamed(AppRoutes.newPasswordScreen);
+                    final otp = pinController.text.trim();
+                    verifyUser(email, otp);
                   },
                   child: Container(
                     width: double.infinity,

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:laundry/helpers/route.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:laundry/utils/app_contants.dart';
 import 'dart:convert';
 import '../../utils/app_colors.dart';
 import '../components/custom_text_field.dart';
@@ -28,21 +29,10 @@ class _SignUPScreenState extends State<SignUPScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // API endpoint
-  final String apiUrl = "https://crafts-duration-prompt-beverage.trycloudflare.com/api/auth/signup";
+  final String apiUrl = "${AppConstants.BASE_URL}/api/auth/signup";
 
   Future<void> _createUser() async {
     if (!_formKey.currentState!.validate()) return;
-
-    // Check if passwords match
-    if (passController.text != confirmPassCon.text) {
-      Get.snackbar(
-        'Error',
-        'Passwords do not match',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
 
     setState(() {
       isLoading = true;
@@ -66,74 +56,42 @@ class _SignUPScreenState extends State<SignUPScreen> {
         isLoading = false;
       });
 
+      final data = json.decode(response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Success
-        final responseData = json.decode(response.body);
         Get.snackbar(
-          'Success',
-          'Account created successfully!',
+          "Success",
+          data["message"] ?? "Account created successfully!",
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
 
-        // Navigate to login screen
-        Get.offNamed(AppRoutes.loginScreen);
-      } else {
-        // Error handling
-        final errorData = json.decode(response.body);
+        Get.offNamed(AppRoutes.oTPScreen, arguments: { "email": emailController.text.trim(), "nextScreen": "login"});
+
+      }else {
         Get.snackbar(
-          'Error',
-          errorData['message'] ?? 'Failed to create account',
+          "Error",
+          data["message"] ?? "Signup failed",
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+    }catch (e) {
       Get.snackbar(
         'Error',
         'Network error: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter email or phone number';
-    }
-    return null;
-  }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter password';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your full name';
-    }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
-    if (value != passController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,14 +138,19 @@ class _SignUPScreenState extends State<SignUPScreen> {
                     ),
                     fillColor: const Color(0xFFFFFFFF),
                     fieldBorderColor: AppColors.borderColor,
-                    validator: _validateName,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your full name";
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 12.h),
 
                   // Email/Phone Field
                   CustomTextField(
                     textEditingController: emailController,
-                    hintText: 'E-mail address or phone number',
+                    hintText: 'Enter your e-mail address',
                     hintStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16.sp,
@@ -195,7 +158,16 @@ class _SignUPScreenState extends State<SignUPScreen> {
                     ),
                     fillColor: const Color(0xFFFFFFFF),
                     fieldBorderColor: AppColors.borderColor,
-                    validator: _validateEmail,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter an email";
+                      } else if (!RegExp(
+                          r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                          .hasMatch(value)) {
+                        return "Please enter a valid email";
+                      }
+                      return null;
+                    },
                     keyboardType: TextInputType.emailAddress,
                   ),
                   SizedBox(height: 12.h),
@@ -212,7 +184,14 @@ class _SignUPScreenState extends State<SignUPScreen> {
                     isPassword: true,
                     fillColor: const Color(0xFFFFFFFF),
                     fieldBorderColor: AppColors.borderColor,
-                    validator: _validatePassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 12.h),
 
@@ -228,7 +207,16 @@ class _SignUPScreenState extends State<SignUPScreen> {
                     isPassword: true,
                     fillColor: const Color(0xFFFFFFFF),
                     fieldBorderColor: AppColors.borderColor,
-                    validator: _validateConfirmPassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please confirm your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      } else if (passController.text != confirmPassCon.text) {
+                        return "Password Mismatch";
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(height: MediaQuery.of(context).size.height * 0.030),
