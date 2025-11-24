@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../controller/profile/edit_profile_controller.dart';
+import '../../model/profile_model.dart';
 import '../../utils/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../components/custom_text_field.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 
 
@@ -18,12 +21,28 @@ class EditProfileScreen extends StatefulWidget{
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  late ProfileModel profile;
+
   final EditProfile _controller = Get.put(EditProfile());
   final TextEditingController emailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController currentPassController = TextEditingController();
   final TextEditingController newpPassController = TextEditingController();
   final TextEditingController confirmPassController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    profile = Get.arguments as ProfileModel;
+    // Prefill controllers
+    nameController.text = profile.fullname;
+    emailController.text = profile.email;
+
+    // Set initial image if needed
+    if (profile.profileImage.isNotEmpty) {
+      _controller.setInitialImage(profile.profileImage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,19 +94,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Center(
                       child: Stack(
                         children: [
-                          Container(
-                            padding: EdgeInsets.all(0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.mainAppColor, width: 1.5),
-                            ),
-                            child: CircleAvatar(
-                              radius: 55,
-                              backgroundImage: _controller.selectedImageEDT.value != null
-                                  ? FileImage(_controller.selectedImageEDT.value!)
-                                  : AssetImage("assets/images/profileImg.png") as ImageProvider,
-                            ),
-                          ),
+                          Obx(() {
+                            final imageUrl = _controller.userProfileImageUrl.value;
+                            final file = _controller.selectedImageEDT.value;
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.mainAppColor, width: 1.5),
+                              ),
+                              child: ClipOval(
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 110,
+                                  child: file != null
+                                  // 🔥 Picked image
+                                      ? Image.file(file, fit: BoxFit.cover)
+
+                                  // 🔥 Server image with shimmer (same as profile page)
+                                      : CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        width: 110,
+                                        height: 110,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Image.asset(
+                                      "assets/images/emptyUser.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                           Positioned(
                             bottom: 5,
                             right: 2,
@@ -117,7 +165,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hintText: 'Name',
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Color(0xFF737373),
                       ),
                       fillColor: Color(0xFF1C5941).withOpacity(0.03),
@@ -127,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
 
                     Text(
-                      "E-mail address or phone number",
+                      "E-mail address",
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
@@ -137,12 +185,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     SizedBox(height: 8.h),
                     CustomTextField(
                       textEditingController: emailController,
-                      hintText: 'E-mail address or phone number',
+                      hintText: 'E-mail address',
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Color(0xFF737373),
                       ),
+                      readOnly: true,
                       fillColor: Color(0xFF1C5941).withOpacity(0.03),
                       fieldBorderColor: AppColors.mainAppColor,
                     ),
@@ -163,7 +212,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hintText: '********',
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Color(0xFF737373),
                       ),
                       isPassword: true,
@@ -187,7 +236,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hintText: '********',
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Color(0xFF737373),
                       ),
                       isPassword: true,
@@ -210,7 +259,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hintText: '********',
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         color: Color(0xFF737373),
                       ),
                       isPassword: true,

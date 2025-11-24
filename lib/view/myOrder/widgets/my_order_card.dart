@@ -5,13 +5,20 @@ import 'package:laundry/helpers/route.dart';
 import 'package:laundry/utils/app_colors.dart';
 import 'package:get/get.dart';
 
-class MyOrderCard extends StatelessWidget{
-  final String time;
+
+class MyOrderCard extends StatelessWidget {
+  final String updatedDate;
   final String price;
   final String status;
+  final String orderId; // added
 
-  const MyOrderCard({super.key, required this.time, required this.price, required this.status});
-
+  const MyOrderCard({
+    super.key,
+    required this.updatedDate,
+    required this.price,
+    required this.status,
+    required this.orderId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +38,10 @@ class MyOrderCard extends StatelessWidget{
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: [
               Text(
                 "Laundry Service",
                 style: GoogleFonts.inter(
@@ -44,7 +51,7 @@ class MyOrderCard extends StatelessWidget{
                 ),
               ),
               Text(
-                time,
+                updatedDate,
                 style: GoogleFonts.inter(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w400,
@@ -67,7 +74,7 @@ class MyOrderCard extends StatelessWidget{
           SizedBox(height: 12.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: [
               Text(
                 "Price: \$$price",
                 style: GoogleFonts.inter(
@@ -81,21 +88,20 @@ class MyOrderCard extends StatelessWidget{
                 style: GoogleFonts.inter(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: status == "Completed"
-                      ? const Color(0xFF45DE6E)
-                      : const Color(0xFF9A9A10),
+                  color: status.toLowerCase() == "completed"
+                      ? Color(0xFF45DE6E)
+                      : Color(0xFF9A9A10),
                 ),
               ),
             ],
           ),
-
           SizedBox(height: 12.h),
-
           Align(
             alignment: Alignment.bottomRight,
             child: GestureDetector(
-              onTap: (){
-                Get.toNamed(AppRoutes.orderDetailsScreen);
+              onTap: () {
+                // Navigate to details screen with order ID
+                Get.toNamed(AppRoutes.orderDetailsScreen, arguments: orderId);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 25.w),
@@ -114,10 +120,8 @@ class MyOrderCard extends StatelessWidget{
               ),
             ),
           ),
-
         ],
       ),
     );
   }
-
 }
