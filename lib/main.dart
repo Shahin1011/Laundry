@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:laundry/utils/token_service.dart';
+import 'controller/profile/profile_controller.dart';
 import 'helpers/route.dart';
 
 void main() async {
@@ -13,6 +14,7 @@ void main() async {
     statusBarIconBrightness: Brightness.light, // Android: dark icons
     statusBarBrightness: Brightness.dark, // iOS: light background
   ));
+  Get.put(ProfileController());
 
   runApp(const MyApp());
 }

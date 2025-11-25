@@ -1,15 +1,22 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../controller/profile/edit_profile_controller.dart';
+import '../../controller/profile/profile_controller.dart';
+import '../../helpers/route.dart';
 import '../../model/profile_model.dart';
 import '../../utils/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../utils/token_service.dart';
 import '../components/custom_text_field.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
+
 
 
 
@@ -22,13 +29,11 @@ class EditProfileScreen extends StatefulWidget{
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late ProfileModel profile;
+  bool isLoading = false;
 
   final EditProfile _controller = Get.put(EditProfile());
   final TextEditingController emailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController currentPassController = TextEditingController();
-  final TextEditingController newpPassController = TextEditingController();
-  final TextEditingController confirmPassController = TextEditingController();
 
   @override
   void initState() {
@@ -43,6 +48,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _controller.setInitialImage(profile.profileImage);
     }
   }
+
+
+  Future<bool> hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<void> updateUser() async {
+    if (!await hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    final token = await TokenService().getToken();
+    if (token == null || token.isEmpty) {
+      Get.snackbar("Alert", "No authentication token");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    File? imageFile = _controller.selectedImage.value;
+    String newName = nameController.text.trim();
+
+    try {
+      final response = await _controller.uploadProfile(
+        fullname: newName,
+        imageFile: imageFile,
+        token: token,
+      );
+
+      if (response["status"] == 200) {
+
+        // Update ProfileController instantly
+        final p = Get.find<ProfileController>();
+        p.fetchProfile();
+
+        Get.snackbar(
+          "Success",
+          response["body"]["message"] ?? "Updated successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.back();
+      } else {
+        Get.snackbar(
+          "Error",
+          response["body"]["message"] ?? "Update failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +163,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           Obx(() {
                             final imageUrl = _controller.userProfileImageUrl.value;
-                            final file = _controller.selectedImageEDT.value;
+                            final file = _controller.selectedImage.value;
 
                             return Container(
                               decoration: BoxDecoration(
@@ -108,10 +175,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   width: 110,
                                   height: 110,
                                   child: file != null
-                                  // 🔥 Picked image
+                                  // Picked image
                                       ? Image.file(file, fit: BoxFit.cover)
 
-                                  // 🔥 Server image with shimmer (same as profile page)
+                                  // Server image with shimmer (same as profile page)
                                       : CachedNetworkImage(
                                     imageUrl: imageUrl,
                                     fit: BoxFit.cover,
@@ -195,84 +262,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       fillColor: Color(0xFF1C5941).withOpacity(0.03),
                       fieldBorderColor: AppColors.mainAppColor,
                     ),
-                    SizedBox(height: 16.h),
-
-
-                    Text(
-                      "Current Password",
-                      style: GoogleFonts.inter(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF2B4237),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      textEditingController: currentPassController,
-                      hintText: '********',
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
-                        color: Color(0xFF737373),
-                      ),
-                      isPassword: true,
-                      fillColor: Color(0xFF1C5941).withOpacity(0.03),
-                      fieldBorderColor: AppColors.mainAppColor,
-                    ),
-                    SizedBox(height: 16.h),
-
-
-                    Text(
-                      "New Password",
-                      style: GoogleFonts.inter(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF2B4237),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      textEditingController: newpPassController,
-                      hintText: '********',
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
-                        color: Color(0xFF737373),
-                      ),
-                      isPassword: true,
-                      fillColor: Color(0xFF1C5941).withOpacity(0.03),
-                      fieldBorderColor: AppColors.mainAppColor,
-                    ),
-                    SizedBox(height: 16.h),
-
-                    Text(
-                      "Confirm Password",
-                      style: GoogleFonts.inter(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF2B4237),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      textEditingController: confirmPassController,
-                      hintText: '********',
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
-                        color: Color(0xFF737373),
-                      ),
-                      isPassword: true,
-                      fillColor: Color(0xFF1C5941).withOpacity(0.03),
-                      fieldBorderColor: AppColors.mainAppColor,
-                    ),
-
                     SizedBox(height: MediaQuery.of(context).size.height * 0.044),
 
                     GestureDetector(
-                      onTap: (){
-
-                      },
+                      onTap: isLoading ? null : updateUser,
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -281,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
-                          "Save Changes",
+                          isLoading ? "Loading..." : "Save Changes",
                           style: GoogleFonts.inter(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
@@ -303,5 +296,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
+
 }
 

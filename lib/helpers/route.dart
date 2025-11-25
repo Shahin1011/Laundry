@@ -16,6 +16,7 @@ import '../view/home/stripe_payment_screen.dart';
 import '../view/myOrder/myOreder_screen.dart';
 import '../view/myOrder/order_details_screen.dart';
 import '../view/profile/Help_support_screen.dart';
+import '../view/profile/change_password_screen.dart';
 import '../view/profile/contract_us_screen.dart';
 import '../view/profile/edit_profile_screen.dart';
 import '../view/profile/profile_screen.dart';
@@ -52,6 +53,7 @@ class AppRoutes {
   static const String contractUsScreen = "/contract_us_screen";
   static const String orderDetailsScreen = "/order_details_screen";
   static const String notificationScreen = "/notification_screen";
+  static const String changePasswordScreen = "/change_password_screen";
 
   static List<GetPage> routes = [
 
@@ -79,6 +81,7 @@ class AppRoutes {
     GetPage(name: contractUsScreen, page: () => ContractUsScreen()),
     GetPage(name: orderDetailsScreen, page: () => OrderDetailsScreen()),
     GetPage(name: notificationScreen, page: () => NotificationScreen()),
+    GetPage(name: changePasswordScreen, page: () => ChangePasswordScreen()),
 
   ];
 }

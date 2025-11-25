@@ -11,13 +11,23 @@ import 'package:shimmer/shimmer.dart';
 
 
 
+class ProfileScreen extends StatefulWidget {
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileController c = Get.put(ProfileController());
+
+   // @override
+   // void initState() {
+   //   super.initState();
+   //   c.fetchProfile();
+   // }
 
   @override
   Widget build(BuildContext context) {
-    final ProfileController c = Get.put(ProfileController());
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -53,7 +63,6 @@ class ProfileScreen extends StatelessWidget {
               if (profile == null) {
                 return Center(child: Text("No profile data"));
               }
-
               return RefreshIndicator(
                 onRefresh: c.fetchProfile,
                 child: SingleChildScrollView(
@@ -240,6 +249,35 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 16.h),
+
+                              // Change password
+                              GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(AppRoutes.changePasswordScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.asset("assets/icons/padlock.png", width: 24.w, height: 24.h, color: Color(0xFF595959)),
+                                        SizedBox(width: 5.w),
+                                        Text(
+                                          "Change Password",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFF4D4D4D),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.arrow_forward_ios, size: 18, color: Color(0xFF4D4D4D))
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 16.h),
+
 
                               // Logout
                               GestureDetector(

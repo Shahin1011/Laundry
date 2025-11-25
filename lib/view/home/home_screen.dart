@@ -10,7 +10,7 @@ import 'widgets/recent_order_card.dart';
 import 'widgets/bottom_nav_widget.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
