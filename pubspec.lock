@@ -520,6 +520,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  progress_line:
+    dependency: "direct main"
+    description:
+      name: progress_line
+      sha256: "1efaa37ea99d6b9f292afa88f81583d74250e7c70ece7644e04d1604a1d43493"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   rxdart:
     dependency: transitive
     description:

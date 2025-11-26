@@ -56,9 +56,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Bottom Navigation
-         // BottomNavWidget(currentRoute: AppRoutes.homeScreen),
+
         ],
       ),
     );

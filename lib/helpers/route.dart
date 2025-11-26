@@ -79,7 +79,7 @@ class AppRoutes {
     GetPage(name: editProfileScreen, page: () => EditProfileScreen()),
     GetPage(name: helpAndSupportScreen, page: () => HelpAndSupportScreen()),
     GetPage(name: contractUsScreen, page: () => ContractUsScreen()),
-    GetPage(name: orderDetailsScreen, page: () => OrderDetailsScreen()),
+    GetPage(name: orderDetailsScreen, page: () => OrderDetailsScreen(orderId: Get.arguments,)),
     GetPage(name: notificationScreen, page: () => NotificationScreen()),
     GetPage(name: changePasswordScreen, page: () => ChangePasswordScreen()),
 

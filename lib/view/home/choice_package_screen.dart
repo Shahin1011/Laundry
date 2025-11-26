@@ -194,7 +194,7 @@ class _ChoicePackageScreenState extends State<ChoicePackageScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (bag.quantity > 1) {
+                      if (bag.quantity > 0) {
                         bag.quantity--;
                       }
                     });
@@ -206,7 +206,7 @@ class _ChoicePackageScreenState extends State<ChoicePackageScreen> {
                     child: Icon(
                       Icons.remove,
                       size: 18.sp,
-                      color: bag.quantity > 1 ? Color(0xFF1F1D1D) : Color(0xFFC8CACC),
+                      color: bag.quantity > 0 ? Color(0xFF1F1D1D) : Color(0xFFC8CACC),
                     ),
                   ),
                 ),
@@ -256,30 +256,6 @@ class _ChoicePackageScreenState extends State<ChoicePackageScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required bool isActive,
-  }) {
-    final Color color = isActive ? AppColors.mainAppColor : Color(0xFF757575);
-    
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24.sp),
-        SizedBox(height: 4.h),
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
-        ),
-      ],
     );
   }
 }

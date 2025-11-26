@@ -6,11 +6,10 @@ import '../../utils/app_contants.dart';
 import '../../utils/token_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-
 class OrdersController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var orders = <OrderSummary>[].obs;
+  var orders = <Order>[].obs;   // FIXED
 
   final String ordersUrl = "${AppConstants.BASE_URL}/api/orders/my-orders";
 
@@ -27,13 +26,13 @@ class OrdersController extends GetxController {
 
   Future<void> fetchOrders() async {
     if (!await hasInternetConnection()) {
-      Get.snackbar("No Internet", "Please check your internet connection.");
+      Get.snackbar("No Internet", "Please check your connection.");
       return;
     }
 
     final token = await TokenService().getToken();
     if (token == null || token.isEmpty) {
-      errorMessage.value = "No authentication token";
+      errorMessage.value = "No auth token";
       return;
     }
 
@@ -51,15 +50,13 @@ class OrdersController extends GetxController {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        final List<dynamic> orderList =
-            jsonData["data"]?["orders"] ?? [];
+        final List<dynamic> orderList = jsonData["data"]?["orders"] ?? [];
 
-        orders.value =
-            orderList.map((e) => OrderSummary.fromJson(e)).toList();
+        orders.value = orderList.map((e) => Order.fromJson(e)).toList();
+
       } else {
-        errorMessage.value = "Failed to fetch orders: ${response.statusCode}";
+        errorMessage.value = "Failed: ${response.statusCode}";
       }
-
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

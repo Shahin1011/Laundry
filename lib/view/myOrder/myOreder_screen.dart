@@ -52,10 +52,10 @@ class MyOrderScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final order = c.orders[index];
                   return MyOrderCard(
-                    updatedDate: DateFormat('yyyy-MM-dd').format(order.updatedAt),
-                    price: order.price.toString(),
-                    status: order.status,
-                    orderId: order.id, // pass ID for navigation
+                    updatedDate: DateFormat('yyyy-MM-dd').format(order.updatedAt ?? DateTime.now()),
+                    price: order.total.toString(),
+                    status: order.status ?? "",
+                    orderId: order.id ?? "",
                   );
                 },
               );

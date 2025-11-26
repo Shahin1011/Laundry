@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../utils/app_colors.dart';
+import 'package:progress_line/progress_line.dart';
 
 class RecentOrderCard extends StatelessWidget {
   final String orderId;
@@ -11,7 +12,7 @@ class RecentOrderCard extends StatelessWidget {
   const RecentOrderCard({
     super.key,
     this.orderId = '1923838',
-    this.currentStage = 'Washing', // Pickup, Washing, Delivery
+    this.currentStage = 'Delivery', // Pickup, Washing, Delivery
   });
 
   @override
@@ -52,38 +53,15 @@ class RecentOrderCard extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           // Progress Bar
-          Row(
-            children: [
-              // Completed progress (teal) - approximately 65% of width
-              Expanded(
-                flex: 60,
-                child: Container(
-                  height: 10.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.mainAppColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12.r),
-                      bottomLeft: Radius.circular(12.r),
-                    ),
-                  ),
-                ),
-              ),
-              // Remaining progress (gray)
-              Expanded(
-                flex: 35,
-                child: Container(
-                  height: 10.h,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFE6E6E6),
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(12.r),
-                      bottomRight: Radius.circular(12.r),
-                    ),
-                  ),
-                ),
-              ),
+          ProgressLineWidget(
+            percent: 0.5,
+            lineColors: const [
+              AppColors.mainAppColor,
             ],
+            bgColor: Colors.grey.withOpacity(0.7),
+            width: double.infinity,
           ),
+
         ],
       ),
     );
