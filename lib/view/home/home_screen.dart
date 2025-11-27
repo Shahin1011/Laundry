@@ -24,6 +24,7 @@ class HomeScreen extends StatelessWidget {
           // Content
           Expanded(
             child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               padding: EdgeInsets.symmetric(vertical: 24.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,13 +46,19 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
                   SizedBox(height: 16.h),
                   
                   // Recent Order Card
-                  RecentOrderCard(),
-                  
-                  SizedBox(height: 40.h),
+                  ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: 4,
+                    itemBuilder: (context, index){
+                      return RecentOrderCard();
+                    },
+                  ),
+                  SizedBox(height: 20.h),
                 ],
               ),
             ),

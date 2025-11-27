@@ -48,6 +48,7 @@ dependencies:
   shimmer: ^3.0.0
   http_parser: ^4.1.2
   progress_line: ^0.1.0
+  intl_phone_field: ^3.2.0
 
 dev_dependencies:
   flutter_test:

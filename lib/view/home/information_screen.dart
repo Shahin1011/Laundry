@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../controller/profile/profile_controller.dart';
+import '../../model/profile_model.dart';
 import '../../utils/app_colors.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:get/get.dart';
+
+
 
 class InformationScreen extends StatefulWidget {
   const InformationScreen({super.key});
@@ -12,14 +18,18 @@ class InformationScreen extends StatefulWidget {
 }
 
 class _InformationScreenState extends State<InformationScreen> {
-  final TextEditingController fullNameController = TextEditingController(text: 'Rokey Mahmud');
+
+  final ProfileController c = Get.find<ProfileController>();
+
+
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController(text: '+1 9999999999');
-  final TextEditingController addressController = TextEditingController(text: '123 Main Street, Jersey City, New Jersey 07302, USA');
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController zipCodeController = TextEditingController();
   
-  String selectedState = 'Select';
+  String selectedState = 'Alabama';
 
   @override
   void dispose() {
@@ -33,9 +43,17 @@ class _InformationScreenState extends State<InformationScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Prefill controllers
+    fullNameController.text = c.profile.value!.fullname;
+    emailController.text = c.profile.value!.email;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: AppColors.white,
       body: Column(
           children: [
             // Header
@@ -90,45 +108,7 @@ class _InformationScreenState extends State<InformationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Autofill by scanning button
-                    GestureDetector(
-                      onTap: () {
-                        // Handle autofill by scanning
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF9F9F9),
-                          borderRadius: BorderRadius.circular(8.r),
-                          border: Border.all(
-                            color: Color(0xFFE5E5E5),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner,
-                              size: 24.sp,
-                              color: Color(0xFF1F1D1D),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              'Autofill by scanning',
-                              style: GoogleFonts.inter(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF1F1D1D),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    SizedBox(height: 24.h),
-                    
+
                     // Full Name
                     _buildTextField(
                       label: 'Full Name',
@@ -148,10 +128,34 @@ class _InformationScreenState extends State<InformationScreen> {
                     SizedBox(height: 16.h),
                     
                     // Phone
-                    _buildTextField(
-                      label: 'Phone',
+                    IntlPhoneField(
                       controller: phoneController,
-                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color:  Color(0xFFE5E5E5), width: 1)
+                        ),
+                        focusedBorder: OutlineInputBorder( // Active border
+                          borderSide: BorderSide(color: AppColors.mainAppColor, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+
+                      ),
+                      initialCountryCode: 'US',
+                      validator: (value) {
+                        if (value == null) {
+                          return "Please enter your Phone Number";
+                        }
+                        return null;
+                      },
+                      onChanged: (phone) {
+                        print(phone.completeNumber);
+                      },
                     ),
                     
                     SizedBox(height: 16.h),
@@ -160,7 +164,7 @@ class _InformationScreenState extends State<InformationScreen> {
                     _buildTextField(
                       label: 'Address',
                       controller: addressController,
-                      isAddress: true,
+                      isAddress: false,
                       readOnly: true,
                     ),
                     
@@ -344,7 +348,7 @@ class _InformationScreenState extends State<InformationScreen> {
                     color: Color(0xFF757575),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),
                     borderSide: BorderSide(color: Color(0xFFE5E5E5)),

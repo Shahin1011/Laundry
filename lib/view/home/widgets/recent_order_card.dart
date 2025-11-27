@@ -20,7 +20,7 @@ class RecentOrderCard extends StatelessWidget {
     int currentStageIndex = _getStageIndex(currentStage);
     
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      margin: EdgeInsets.only(bottom: 12.h, left: 20.w, right: 20.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -74,18 +74,6 @@ class RecentOrderCard extends StatelessWidget {
     
     return Column(
       children: [
-        // Container(
-        //   width: 56.w,
-        //   height: 56.h,
-        //   decoration: BoxDecoration(
-        //     shape: BoxShape.circle,
-        //     border: Border.all(
-        //       color: isCompleted || isCurrent ? AppColors.mainAppColor : Color(0xFFE6E6E6),
-        //       width: 2.5,
-        //     ),
-        //     color: isCompleted ? AppColors.mainAppColor.withOpacity(0.1) : Colors.transparent,
-        //   ),
-        //   child:
           Center(
             child: SvgPicture.asset(
               iconPath,
