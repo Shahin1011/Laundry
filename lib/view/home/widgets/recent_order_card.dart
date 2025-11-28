@@ -8,19 +8,21 @@ import 'package:progress_line/progress_line.dart';
 class RecentOrderCard extends StatelessWidget {
   final String orderId;
   final String currentStage;
+  final double progressPercentage;
 
   const RecentOrderCard({
     super.key,
-    this.orderId = '1923838',
-    this.currentStage = 'Delivery', // Pickup, Washing, Delivery
+    required this.orderId,
+    required this.currentStage,
+    required this.progressPercentage,
   });
 
   @override
   Widget build(BuildContext context) {
-    int currentStageIndex = _getStageIndex(currentStage);
+
     
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h, left: 20.w, right: 20.w),
+      margin: EdgeInsets.only(bottom: 10.h, left: 20.w, right: 20.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -54,7 +56,7 @@ class RecentOrderCard extends StatelessWidget {
           SizedBox(height: 20.h),
           // Progress Bar
           ProgressLineWidget(
-            percent: 0.5,
+            percent: progressPercentage,
             lineColors: const [
               AppColors.mainAppColor,
             ],
@@ -68,9 +70,6 @@ class RecentOrderCard extends StatelessWidget {
   }
 
   Widget _buildStageIcon(String label, String iconPath, int index) {
-    int currentStageIndex = _getStageIndex(currentStage);
-    bool isCompleted = index <= currentStageIndex;
-    bool isCurrent = index == currentStageIndex;
     
     return Column(
       children: [
@@ -80,7 +79,7 @@ class RecentOrderCard extends StatelessWidget {
               width: 28.w,
               height: 28.h,
               colorFilter: ColorFilter.mode(
-                isCompleted ? AppColors.mainAppColor : Color(0xFFE6E6E6),
+                AppColors.mainAppColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -92,24 +91,12 @@ class RecentOrderCard extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12.sp,
             fontWeight: FontWeight.w400,
-            color: Color(0xFF1F1D1D),
+            color: AppColors.mainAppColor,
           ),
         ),
       ],
     );
   }
 
-  int _getStageIndex(String stage) {
-    switch (stage) {
-      case 'Pickup':
-        return 0;
-      case 'Washing':
-        return 1;
-      case 'Delivery':
-        return 2;
-      default:
-        return 1;
-    }
-  }
 }
 

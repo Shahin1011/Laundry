@@ -112,7 +112,9 @@ class ChoicePackageScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: GestureDetector(
                         onTap: () {
-                          Get.toNamed(AppRoutes.informationScreen);
+                          if(c.validateSelection()) {
+                            Get.toNamed(AppRoutes.informationScreen);
+                          }
                         },
                         child: Container(
                           width: double.infinity,

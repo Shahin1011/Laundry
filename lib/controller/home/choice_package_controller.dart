@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:laundry/utils/app_colors.dart';
 import 'dart:convert';
 import '../../model/choice_package_model.dart';
 import '../../utils/app_contants.dart';
@@ -26,6 +29,19 @@ class ChoicePackageController extends GetxController {
 
   void selectBag(BagOption bag) {
     selectedBag.value = bag;
+    print("Selected Bag => ${bag.name}, Price => ${bag.price}, Qty => ${bag.quantity.value}");
+  }
+  bool validateSelection() {
+    if (selectedBag.value == null) {
+      Get.snackbar(
+        "No Bag Selected",
+        "Please select a bag before continuing.",
+        backgroundColor: Color(0xFFFF5656),
+        colorText: AppColors.white,
+      );
+      return false;
+    }
+    return true;
   }
 
 
@@ -47,18 +63,6 @@ class ChoicePackageController extends GetxController {
         var jsonData = json.decode(response.body);
         ChoicePackageModel model = ChoicePackageModel.fromJson(jsonData);
         packages.value = model.data ?? [];
-
-        // AUTO SELECT FIRST BAG
-        if (packages.isNotEmpty) {
-          final pkg = packages[0];
-
-          selectedBag.value = BagOption(
-            name: "Small",
-            weight: "5 kg",
-            price: pkg.prices?.small ?? 0,
-          );
-          print(selectedBag);
-        }
 
       } else {
         errorMessage.value = "Failed: ${response.statusCode}";

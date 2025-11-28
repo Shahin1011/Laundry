@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import '../../controller/order/orders_controller.dart';
 import '../../utils/app_colors.dart';
-import '../../helpers/route.dart';
 import 'widgets/home_header_widget.dart';
 import 'widgets/laundry_service_card.dart';
 import 'widgets/recent_order_card.dart';
-import 'widgets/bottom_nav_widget.dart';
+
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
+
+  final OrdersController c = Get.put(OrdersController());
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                   // Laundry Service Card
                   LaundryServiceCard(),
                   
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 15.h),
                   
                   // Recent Order Title
                   Padding(
@@ -46,17 +49,46 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 15.h),
                   
                   // Recent Order Card
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    itemBuilder: (context, index){
-                      return RecentOrderCard();
-                    },
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 0.0),
+                    child: Obx((){
+                      if (c.isLoading.value) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (c.errorMessage.isNotEmpty) {
+                        return Center(child: Text(c.errorMessage.value));
+                      }
+
+                      // Filter: Remove completed orders
+                      final filteredOrders = c.orders
+                          .where((order) =>
+                      order.status?.toLowerCase() != "completed")
+                          .toList();
+
+                      if (filteredOrders.isEmpty) {
+                        return const Center(
+                            child: Text("No ongoing orders found"));
+                      }
+
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: filteredOrders.length,
+                        itemBuilder: (context, index){
+                          final order = filteredOrders[index];
+                          return RecentOrderCard(
+                            orderId: order.id ?? "",
+                            currentStage: order.status ?? "",
+                            progressPercentage: getProgress(order.status ?? ""),
+                          );
+                        },
+                      );
+                    }),
                   ),
                   SizedBox(height: 20.h),
                 ],
@@ -68,4 +100,22 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  double getProgress(String status) {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return 0.05;
+      case "pickup":
+        return 0.25;
+      case "washing":
+        return 0.60;
+      case "delivery":
+        return 0.95;
+      case "completed":
+        return 1.00;
+      default:
+        return 0.0;
+    }
+  }
+
 }
