@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:laundry/view/myOrder/widgets/my_order_card.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../controller/order/orders_controller.dart';
 import '../../utils/app_colors.dart';
-import 'package:intl/intl.dart';
-import 'package:get/get.dart';
-
+import '../myOrder/widgets/my_order_card.dart';
 
 class MyOrderScreen extends StatelessWidget {
   final OrdersController c = Get.put(OrdersController());
@@ -19,19 +16,16 @@ class MyOrderScreen extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.13,
-            decoration: BoxDecoration(color: AppColors.mainAppColor),
+            height: 120,
+            color: AppColors.mainAppColor,
             alignment: Alignment.center,
-            padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 25.h),
             child: Text(
               "My Orders",
-              style: GoogleFonts.inter(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.white,
-              ),
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
+
           Expanded(
             child: Obx(() {
               if (c.isLoading.value) {
@@ -47,13 +41,14 @@ class MyOrderScreen extends StatelessWidget {
               }
 
               return ListView.builder(
-                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+                padding: EdgeInsets.all(16),
                 itemCount: c.orders.length,
                 itemBuilder: (context, index) {
                   final order = c.orders[index];
                   return MyOrderCard(
-                    updatedDate: DateFormat('yyyy-MM-dd').format(order.updatedAt ?? DateTime.now()),
-                    price: order.total.toString(),
+                    updatedDate: DateFormat('yyyy-MM-dd')
+                        .format(order.updatedAt ?? DateTime.now()),
+                    price: order.totalPrice?.toString() ?? "0",
                     status: order.status ?? "",
                     orderId: order.id ?? "",
                   );
@@ -66,4 +61,3 @@ class MyOrderScreen extends StatelessWidget {
     );
   }
 }
-

@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:laundry/model/order_model.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../../model/order_model.dart';
 import '../../utils/app_contants.dart';
 import '../../utils/token_service.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class OrdersController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var orders = <Order>[].obs;   // FIXED
+  var orders = <Order>[].obs;
 
   final String ordersUrl = "${AppConstants.BASE_URL}/api/orders/my-orders";
 
@@ -42,18 +42,18 @@ class OrdersController extends GetxController {
       final response = await http.get(
         Uri.parse(ordersUrl),
         headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
         },
       );
+      print("My Order RESPONSE =====================: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        final List<dynamic> orderList = jsonData["data"]?["orders"] ?? [];
+        final summary = OrderSummary.fromJson(jsonData);
 
-        orders.value = orderList.map((e) => Order.fromJson(e)).toList();
-
+        orders.value = summary.data?.orders ?? [];
       } else {
         errorMessage.value = "Failed: ${response.statusCode}";
       }

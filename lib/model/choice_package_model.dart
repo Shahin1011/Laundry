@@ -2,110 +2,188 @@ class ChoicePackageModel {
   bool? success;
   int? status;
   String? message;
-  List<PackageData>? data;
+  int? total;
+  int? page;
+  int? limit;
+  int? totalPages;
+  List<Data>? data;
 
-  ChoicePackageModel({this.success, this.status, this.message, this.data});
+  ChoicePackageModel({
+    this.success,
+    this.status,
+    this.message,
+    this.total,
+    this.page,
+    this.limit,
+    this.totalPages,
+    this.data,
+  });
 
-  ChoicePackageModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    status = json['status'];
-    message = json['message'];
-    if (json['data'] != null) {
-      data = <PackageData>[];
-      json['data'].forEach((v) {
-        data!.add(PackageData.fromJson(v));
-      });
-    }
+  factory ChoicePackageModel.fromJson(Map<String, dynamic> json) {
+    return ChoicePackageModel(
+      success: json['success'],
+      status: json['status'],
+      message: json['message'],
+      total: json['total'],
+      page: json['page'],
+      limit: json['limit'],
+      totalPages: json['totalPages'],
+      data: json['data'] != null
+          ? List<Data>.from(json['data'].map((x) => Data.fromJson(x)))
+          : [],
+    );
   }
-
-  Map<String, dynamic> toJson() => {
-    'success': success,
-    'status': status,
-    'message': message,
-    'data': data?.map((v) => v.toJson()).toList(),
-  };
 }
 
-class PackageData {
-  String? image;
-  String? deliveryTime;
+class Data {
   String? id;
-  String? packageName; // now just String
-  Prices? prices;      // NEW: store small, medium, large here
-  String? categoryId;
+  String? packageName;
   String? description;
   String? packageImage;
+  BagCategory? bagCategory;
   String? estimatedDeliveryTime;
   bool? isActive;
   String? createdAt;
   String? updatedAt;
-  int? v;
 
-  PackageData({
-    this.image,
-    this.deliveryTime,
+  Data({
     this.id,
     this.packageName,
-    this.prices,
-    this.categoryId,
     this.description,
     this.packageImage,
+    this.bagCategory,
     this.estimatedDeliveryTime,
     this.isActive,
     this.createdAt,
     this.updatedAt,
-    this.v,
   });
 
-  PackageData.fromJson(Map<String, dynamic> json) {
-    image = json['image'];
-    deliveryTime = json['deliveryTime'];
-    id = json['_id'];
-    packageName = json['packageName'];
-    prices = json['prices'] != null ? Prices.fromJson(json['prices']) : null;
-    categoryId = json['categoryId'];
-    description = json['description'];
-    packageImage = json['packageImage'];
-    estimatedDeliveryTime = json['estimatedDeliveryTime'];
-    isActive = json['isActive'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    v = json['__v'];
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      id: json['_id'],
+      packageName: json['packageName'],
+      description: json['description'],
+      packageImage: json['packageImage'],
+      bagCategory: json['bagCategory'] != null
+          ? BagCategory.fromJson(json['bagCategory'])
+          : null,
+      estimatedDeliveryTime: json['estimatedDeliveryTime'],
+      isActive: json['isActive'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
   }
-
-  Map<String, dynamic> toJson() => {
-    'image': image,
-    'deliveryTime': deliveryTime,
-    '_id': id,
-    'packageName': packageName,
-    'prices': prices?.toJson(),
-    'categoryId': categoryId,
-    'description': description,
-    'packageImage': packageImage,
-    'estimatedDeliveryTime': estimatedDeliveryTime,
-    'isActive': isActive,
-    'createdAt': createdAt,
-    'updatedAt': updatedAt,
-    '__v': v,
-  };
 }
 
-class Prices {
-  int? small;
-  int? medium;
-  int? large;
+class BagCategory {
+  List<Small>? small;
+  List<Medium>? medium;
+  List<Large>? large;
 
-  Prices({this.small, this.medium, this.large});
+  BagCategory({
+    this.small,
+    this.medium,
+    this.large,
+  });
 
-  Prices.fromJson(Map<String, dynamic> json) {
-    small = json['small'];
-    medium = json['medium'];
-    large = json['large'];
+  factory BagCategory.fromJson(Map<String, dynamic> json) {
+    return BagCategory(
+      small: json['small'] != null
+          ? List<Small>.from(json['small'].map((x) => Small.fromJson(x)))
+          : [],
+      medium: json['medium'] != null
+          ? List<Medium>.from(json['medium'].map((x) => Medium.fromJson(x)))
+          : [],
+      large: json['large'] != null
+          ? List<Large>.from(json['large'].map((x) => Large.fromJson(x)))
+          : [],
+    );
   }
+}
 
-  Map<String, dynamic> toJson() => {
-    'small': small,
-    'medium': medium,
-    'large': large,
-  };
+class Small {
+  String? id;
+  int? price;
+  String? description;
+  int? kg;
+  String? deliveryTime;
+  int? serviceFee;
+
+  Small({
+    this.id,
+    this.price,
+    this.description,
+    this.kg,
+    this.deliveryTime,
+    this.serviceFee,
+  });
+
+  factory Small.fromJson(Map<String, dynamic> json) {
+    return Small(
+      id: json['_id'],
+      price: json['price'],
+      description: json['description'],
+      kg: json['kg'],
+      deliveryTime: json['deliveryTime'],
+      serviceFee: json['serviceFee'],
+    );
+  }
+}
+
+class Medium {
+  String? id;
+  int? price;
+  String? description;
+  int? kg;
+  String? deliveryTime;
+  int? serviceFee;
+
+  Medium({
+    this.id,
+    this.price,
+    this.description,
+    this.kg,
+    this.deliveryTime,
+    this.serviceFee,
+  });
+
+  factory Medium.fromJson(Map<String, dynamic> json) {
+    return Medium(
+      id: json['_id'],
+      price: json['price'],
+      description: json['description'],
+      kg: json['kg'],
+      deliveryTime: json['deliveryTime'],
+      serviceFee: json['serviceFee'],
+    );
+  }
+}
+
+class Large {
+  String? id;
+  int? price;
+  String? description;
+  int? kg;
+  String? deliveryTime;
+  int? serviceFee;
+
+  Large({
+    this.id,
+    this.price,
+    this.description,
+    this.kg,
+    this.deliveryTime,
+    this.serviceFee,
+  });
+
+  factory Large.fromJson(Map<String, dynamic> json) {
+    return Large(
+      id: json['_id'],
+      price: json['price'],
+      description: json['description'],
+      kg: json['kg'],
+      deliveryTime: json['deliveryTime'],
+      serviceFee: json['serviceFee'],
+    );
+  }
 }

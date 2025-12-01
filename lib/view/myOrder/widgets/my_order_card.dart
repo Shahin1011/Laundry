@@ -20,7 +20,6 @@ class MyOrderCard extends StatelessWidget {
     required this.orderId,
   });
 
-  final int serviceFee = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +77,7 @@ class MyOrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Price: \$${(int.tryParse(price) ?? 0) + serviceFee}",
+                "Price: \$${(int.tryParse(price) ?? 0)}",
                 style: GoogleFonts.inter(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,

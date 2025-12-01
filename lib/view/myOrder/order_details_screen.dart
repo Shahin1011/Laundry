@@ -14,11 +14,12 @@ class OrderDetailsScreen extends StatelessWidget {
   OrderDetailsScreen({super.key, required this.orderId});
 
   final OrderDetailsController c = Get.put(OrderDetailsController());
-  final int serviceFee = 3;
+
   @override
   Widget build(BuildContext context) {
     // Fetch order details on screen open
     c.fetchOrderDetails(orderId);
+
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -101,10 +102,11 @@ class OrderDetailsScreen extends StatelessWidget {
                 return Center(child: Text(c.errorMessage.value));
               }
 
-              final order = c.orderDetails.value?.data?.order;
-              final customer = c.orderDetails.value?.data?.customerProfile;
+              final data = c.orderDetails.value?.data;
+              final totalServiceFee = data?.bags?.fold<int>(0, (previousValue, bag) => previousValue + (bag.serviceFee ?? 0),) ?? 0;
 
-              if (order == null || customer == null) {
+
+              if (data == null) {
                 return const Center(child: Text("Order details not found"));
               }
 
@@ -123,7 +125,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      "${customer.name}",
+                      "${data.fullName}",
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -143,7 +145,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      customer.phone ?? 'Not given',
+                      data.phone ?? 'Not given',
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -163,7 +165,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      customer.email ?? 'N/A',
+                      data.email ?? 'N/A',
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -184,7 +186,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      "${order.orderId}",
+                      "${data.sId}",
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -205,7 +207,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      _formatDate(order.pickupDate),
+                      _formatDate(data.pickupDate),
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -226,7 +228,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      _formatDate(order.dropoffDate),
+                      _formatDate(data.dropoffDate),
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -246,7 +248,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      "${order.address?.street}",
+                      "${data.address}",
                       style: GoogleFonts.inter(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -272,7 +274,7 @@ class OrderDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              "${order.address?.city}",
+                              "${data.city}",
                               style: GoogleFonts.inter(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -295,7 +297,7 @@ class OrderDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              "${order.address?.state}",
+                              data.state ?? "",
                               style: GoogleFonts.inter(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -318,7 +320,7 @@ class OrderDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              "${order.address?.zipCode}",
+                              "${data.zipCode}",
                               style: GoogleFonts.inter(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -329,126 +331,77 @@ class OrderDetailsScreen extends StatelessWidget {
                         )
                       ],
                     ),
-
                     SizedBox(height: MediaQuery.of(context).size.height * 0.030),
 
                     Divider(
                       thickness: 1.5,
                       color: Color(0xFFDCDCDC),
                     ),
-
                     SizedBox(height: MediaQuery.of(context).size.height * 0.030),
 
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Color(0xFFC8CACC))
-                      ),
-                      child: Column(
-                        children: [
-                          ...?order.items?.map((item) => Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Price per bag",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF101828),
-                                    ),
-                                  ),
-                                  Text(
-                                    "\$${item.price}",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF2B2B2B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8.h),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Number of bag",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF101828),
-                                    ),
-                                  ),
-                                  Text(
-                                    "${item.quantity}",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xFF2B2B2B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12.h),
-                            ],
-                          )),
 
-                          // Service fee
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Service fee",
-                                style: GoogleFonts.inter(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF101828),
-                                ),
-                              ),
-                              Text(
-                                "+\$$serviceFee",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF2B2B2B),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 12.h),
-                          Divider(
-                            thickness: 1.5,
-                            color: Color(0xFFDCDCDC),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total Payable",
-                                style: GoogleFonts.inter(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF101828),
-                                ),
-                              ),
-                              Text(
-                                "\$${(order.total ?? 0) + serviceFee}",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF2B2B2B),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                    /// Price summary container
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Color(0xFFC8CACC)),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.040),
+                    child: Column(
+                      children: [
+                        // Header Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Bag Name", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                            Text("Quantity", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                            Text("Price per bag", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+
+                        // Dynamic Bag List
+                        Column(
+                          children: data.bags!.map((bag) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(bag.bagsName ?? '', style: GoogleFonts.inter(fontSize: 14.sp)),
+                                  Text("${bag.quantity}", style: GoogleFonts.inter(fontSize: 14.sp)),
+                                  Text("${bag.pricePerBag}", style: GoogleFonts.inter(fontSize: 14.sp)),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(height: 10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Total Service Fee", style: GoogleFonts.inter(fontSize: 14.sp, fontWeight: FontWeight.w400, color: const Color(0xFF101828),),),
+                            Text("$totalServiceFee", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w400, color: const Color(0xFF2B2B2B),),),
+                          ],
+                        ),
+
+                        SizedBox(height: 10.h),
+                        Divider(thickness: 1.5, color: Color(0xFFDCDCDC)),
+                        SizedBox(height: 10.h),
+
+                        // Total Price
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Total Payable", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                            Text("${data.totalPrice}", style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.040),
 
                   ],
                 ),

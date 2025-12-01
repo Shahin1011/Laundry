@@ -6,6 +6,7 @@ import '../../utils/app_contants.dart';
 import '../../utils/token_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+
 class OrderDetailsController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
@@ -35,6 +36,7 @@ class OrderDetailsController extends GetxController {
           'Authorization': 'Bearer $token',
         },
       );
+      print("My Order Details RESPONSE =====================: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);

@@ -2,7 +2,7 @@ class OrderDetailsModel {
   bool? success;
   int? status;
   String? message;
-  OrderData? data;
+  Data? data;
 
   OrderDetailsModel({this.success, this.status, this.message, this.data});
 
@@ -10,161 +10,80 @@ class OrderDetailsModel {
     success = json['success'];
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? OrderData.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 }
 
-class OrderData {
-  CustomerProfile? customerProfile;
-  Order? order;
-
-  OrderData({this.customerProfile, this.order});
-
-  OrderData.fromJson(Map<String, dynamic> json) {
-    customerProfile = json['customerProfile'] != null
-        ? CustomerProfile.fromJson(json['customerProfile'])
-        : null;
-    order = json['order'] != null ? Order.fromJson(json['order']) : null;
-  }
-}
-
-class CustomerProfile {
-  String? name;
+class Data {
+  String? sId;
+  String? status;
+  String? paymentStatus;
+  String? paymentMethod;
+  String? transactionId;
+  String? pickupDate;
+  String? pickupTime;
+  String? dropoffDate;
+  String? dropoffTime;
+  String? fullName;
   String? email;
   String? phone;
-
-  CustomerProfile({this.name, this.email, this.phone});
-
-  CustomerProfile.fromJson(Map<String, dynamic> json) {
-    name = json['Name'];
-    email = json['Email'];
-    phone = json['Phone'];
-  }
-}
-
-class Order {
-  String? id;
-  String? customer;
-  String? serviceType;
-  String? platform;
-  Address? address;
-  List<Item>? items;
-  int? total;
-  String? status;
-  String? pickupDate;
-  String? dropoffDate;
-  String? paymentMethod;
-  PaymentId? paymentId;
-  String? orderId;
-  String? createdAt;
-  String? updatedAt;
-
-  Order(
-      {this.id,
-        this.customer,
-        this.serviceType,
-        this.platform,
-        this.address,
-        this.items,
-        this.total,
-        this.status,
-        this.pickupDate,
-        this.dropoffDate,
-        this.paymentMethod,
-        this.paymentId,
-        this.orderId,
-        this.createdAt,
-        this.updatedAt});
-
-  Order.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    customer = json['customer'];
-    serviceType = json['serviceType'];
-    platform = json['platform'];
-    address =
-    json['address'] != null ? Address.fromJson(json['address']) : null;
-
-    if (json['items'] != null) {
-      items = [];
-      json['items'].forEach((v) => items!.add(Item.fromJson(v)));
-    }
-
-    total = json['total'];
-    status = json['status'];
-    pickupDate = json['pickupDate'];
-    dropoffDate = json['dropoffDate'];
-    paymentMethod = json['paymentMethod'];
-    paymentId =
-    json['paymentId'] != null ? PaymentId.fromJson(json['paymentId']) : null;
-    orderId = json['orderId'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-  }
-}
-
-class Address {
-  String? street;
+  String? address;
   String? city;
   String? state;
   String? zipCode;
+  List<Bags>? bags;
+  int? totalWeight;
+  int? totalPrice;
+  String? createdAt;
+  String? updatedAt;
 
-  Address({this.street, this.city, this.state, this.zipCode});
-
-  Address.fromJson(Map<String, dynamic> json) {
-    street = json['street'];
+  Data.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    status = json['status'];
+    paymentStatus = json['paymentStatus'];
+    paymentMethod = json['paymentMethod'];
+    transactionId = json['transactionId'];
+    pickupDate = json['pickupDate'];
+    pickupTime = json['pickupTime'];
+    dropoffDate = json['dropoffDate'];
+    dropoffTime = json['dropoffTime'];
+    fullName = json['fullName'];
+    email = json['email'];
+    phone = json['phone'];
+    address = json['address'];
     city = json['city'];
     state = json['state'];
     zipCode = json['zipCode'];
-  }
-}
 
-class Item {
-  String? name;
-  int? quantity;
-  int? price;
-  String? id;
+    if (json['bags'] != null) {
+      bags = (json['bags'] as List).map((v) => Bags.fromJson(v)).toList();
+    }
 
-  Item({this.name, this.quantity, this.price, this.id});
-
-  Item.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    quantity = json['quantity'];
-    price = json['price'];
-    id = json['_id'];
-  }
-}
-
-class PaymentId {
-  String? id;
-  String? orderId;
-  String? userId;
-  String? method;
-  int? amount;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
-  int? v;
-
-  PaymentId(
-      {this.id,
-        this.orderId,
-        this.userId,
-        this.method,
-        this.amount,
-        this.status,
-        this.createdAt,
-        this.updatedAt,
-        this.v});
-
-  PaymentId.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    orderId = json['orderId'];
-    userId = json['userId'];
-    method = json['method'];
-    amount = json['amount'];
-    status = json['status'];
+    totalWeight = json['totalWeight'];
+    totalPrice = json['totalPrice'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    v = json['__v'];
+  }
+}
+
+class Bags {
+  String? bagId;
+  String? bagsName;
+  int? quantity;
+  int? pricePerBag;
+  int? totalPrice;
+  int? kgPerBag;
+  int? totalKg;
+  int? serviceFee;
+
+  Bags.fromJson(Map<String, dynamic> json) {
+    bagId = json['bagId'];
+    bagsName = json['bagsName'];
+    quantity = json['quantity'];
+    pricePerBag = json['pricePerBag'];
+    totalPrice = json['totalPrice'];
+    kgPerBag = json['kgPerBag'];
+    totalKg = json['totalKg'];
+    serviceFee = json['serviceFee'];
   }
 }
