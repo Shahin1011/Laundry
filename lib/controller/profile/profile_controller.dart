@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:laundry/helpers/route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/profile_model.dart';
 import '../../utils/app_contants.dart';
 import '../../utils/token_service.dart';
@@ -68,6 +69,12 @@ class ProfileController extends GetxController {
 
   Future<void> logout() async {
     await TokenService().clearToken();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove("email");
+    await prefs.remove("password");
+    await prefs.remove("isLoggedIn");
+
     Get.offAllNamed(AppRoutes.loginScreen);
   }
 }

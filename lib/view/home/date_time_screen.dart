@@ -6,6 +6,10 @@ import 'package:intl/intl.dart';
 import '../components/custom_date_picker_sheet.dart';
 import '../components/custom_time_picker_sheet.dart';
 import '../../utils/app_colors.dart';
+import 'package:get/get.dart';
+import '../../controller/home/booking_controller.dart';
+
+
 
 class DateTimeScreen extends StatefulWidget {
   const DateTimeScreen({super.key});
@@ -15,6 +19,9 @@ class DateTimeScreen extends StatefulWidget {
 }
 
 class _DateTimeScreenState extends State<DateTimeScreen> {
+
+  final BookingController bookingController = Get.find<BookingController>();
+
   DateTime? pickUpDate;
   TimeOfDay? pickUpTime;
   DateTime? dropOffDate;
@@ -72,7 +79,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
               color: Colors.white,
               child: Row(
                 children: [
-                  _buildProgressStep('Information', 1, isActive: false, isCompleted: true),
+                  _buildProgressStep('Information', 1, isActive: true, isCompleted: true),
                   _buildProgressLine(isActive: true),
                   _buildProgressStep('date & time', 2, isActive: true),
                   _buildProgressLine(isActive: false),
@@ -196,6 +203,31 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                     // Continue Button
                     GestureDetector(
                       onTap: () {
+                        // Validate date and time
+                        if (pickUpDate == null) {
+                          Get.snackbar('Error', 'Please select pick-up date');
+                          return;
+                        }
+                        if (pickUpTime == null) {
+                          Get.snackbar('Error', 'Please select pick-up time');
+                          return;
+                        }
+                        if (dropOffDate == null) {
+                          Get.snackbar('Error', 'Please select drop-off date');
+                          return;
+                        }
+                        if (dropOffTime == null) {
+                          Get.snackbar('Error', 'Please select drop-off time');
+                          return;
+                        }
+
+                        // Save to booking controller
+                        bookingController.pickupDate.value = pickUpDate;
+                        bookingController.pickupTime.value = pickUpTime;
+                        bookingController.dropoffDate.value = dropOffDate;
+                        bookingController.dropoffTime.value = dropOffTime;
+
+                        // Navigate to payment screen
                         Navigator.of(context).pushNamed('/payment_screen');
                       },
                       child: Container(
@@ -365,28 +397,5 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
     );
   }
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required bool isActive,
-  }) {
-    final Color color = isActive ? AppColors.mainAppColor : Color(0xFF757575);
-    
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24.sp),
-        SizedBox(height: 4.h),
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
 }
 

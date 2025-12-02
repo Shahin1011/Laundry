@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../controller/profile/profile_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../helpers/route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
+
+import '../../utils/token_service.dart';
 
 
 
@@ -20,11 +23,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController c = Get.put(ProfileController());
 
-   // @override
-   // void initState() {
-   //   super.initState();
-   //   c.fetchProfile();
-   // }
 
   @override
   Widget build(BuildContext context) {

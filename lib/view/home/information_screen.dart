@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../controller/home/booking_controller.dart';
 import '../../controller/profile/profile_controller.dart';
-import '../../model/profile_model.dart';
 import '../../utils/app_colors.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:get/get.dart';
@@ -20,6 +20,7 @@ class InformationScreen extends StatefulWidget {
 class _InformationScreenState extends State<InformationScreen> {
 
   final ProfileController c = Get.find<ProfileController>();
+  final BookingController bookingController = Get.find<BookingController>();
 
 
   final TextEditingController fullNameController = TextEditingController();
@@ -48,6 +49,10 @@ class _InformationScreenState extends State<InformationScreen> {
     // Prefill controllers
     fullNameController.text = c.profile.value!.fullname;
     emailController.text = c.profile.value!.email;
+
+    // Save to booking controller
+    bookingController.fullName.value = c.profile.value!.fullname;
+    bookingController.email.value = c.profile.value!.email;
   }
 
   @override
@@ -92,7 +97,7 @@ class _InformationScreenState extends State<InformationScreen> {
               color: Colors.white,
               child: Row(
                 children: [
-                  _buildProgressStep('Information', 1, isActive: false, isCompleted: true),
+                  _buildProgressStep('Information', 1, isActive: true, isCompleted: true),
                   _buildProgressLine(isActive: true),
                   _buildProgressStep('date & time', 2, isActive: false),
                   _buildProgressLine(isActive: false),
@@ -165,7 +170,6 @@ class _InformationScreenState extends State<InformationScreen> {
                       label: 'Address',
                       controller: addressController,
                       isAddress: false,
-                      readOnly: true,
                     ),
                     
                     SizedBox(height: 16.h),
@@ -195,7 +199,42 @@ class _InformationScreenState extends State<InformationScreen> {
                     // Continue Button
                     GestureDetector(
                       onTap: () {
-                        // Navigate to Date & time screen
+                        // Validate all fields
+                        if (fullNameController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter full name');
+                          return;
+                        }
+                        if (emailController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter email');
+                          return;
+                        }
+                        if (phoneController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter phone number');
+                          return;
+                        }
+                        if (addressController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter address');
+                          return;
+                        }
+                        if (cityController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter city');
+                          return;
+                        }
+                        if (zipCodeController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please enter zip code');
+                          return;
+                        }
+
+                        // Save to booking controller
+                        bookingController.fullName.value = fullNameController.text;
+                        bookingController.email.value = emailController.text;
+                        bookingController.phone.value = phoneController.text;
+                        bookingController.address.value = addressController.text;
+                        bookingController.city.value = cityController.text;
+                        bookingController.state.value = selectedState;
+                        bookingController.zipCode.value = zipCodeController.text;
+
+                        // Navigate to date time screen
                         Navigator.of(context).pushNamed('/date_time_screen');
                       },
                       child: Container(

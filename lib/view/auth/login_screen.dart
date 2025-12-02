@@ -23,6 +23,7 @@ class LoginScreen extends StatefulWidget{
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   bool agree = false;
   bool isLoading = false;
 
@@ -74,11 +75,15 @@ class _LoginScreenState extends State<LoginScreen> {
         String accessToken = data['data']['accessToken'];
         await TokenService().saveToken(accessToken);
 
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', true);
+
+
         /// Save email/password if user checked "Remember me"
-        if (agree) {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString("email", email);
-          await prefs.setString("password", password);
+        if (!agree) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove("email");
+          await prefs.remove("password");
         }
         Get.offNamed(AppRoutes.bottomNavScreen);
 
@@ -92,6 +97,27 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() { isLoading = false; });
     }
   }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberedCredentials();
+  }
+
+  Future<void> _loadRememberedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email');
+    final savedPassword = prefs.getString('password');
+
+    if (savedEmail != null) emailController.text = savedEmail;
+    if (savedPassword != null) passController.text = savedPassword;
+
+    setState(() {
+      agree = (savedEmail != null && savedPassword != null);
+    });
+  }
+
 
 
 

@@ -3,17 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:laundry/utils/token_service.dart';
+import 'controller/home/booking_controller.dart';
+import 'controller/home/choice_package_controller.dart';
 import 'controller/profile/profile_controller.dart';
 import 'helpers/route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await TokenService().init();
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent, // Set visible background color
-    statusBarIconBrightness: Brightness.light, // Android: dark icons
-    statusBarBrightness: Brightness.dark, // iOS: light background
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
   ));
+  Get.put(BookingController());
+  Get.put(ChoicePackageController());
   Get.put(ProfileController());
 
   runApp(const MyApp());

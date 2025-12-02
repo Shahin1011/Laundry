@@ -4,13 +4,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../controller/home/choice_package_controller.dart';
+import '../../controller/home/booking_controller.dart'; // Add this import
 import '../../utils/app_colors.dart';
 import '../../helpers/route.dart';
 
 class ChoicePackageScreen extends StatelessWidget {
   ChoicePackageScreen({super.key});
 
-  final ChoicePackageController c = Get.put(ChoicePackageController());
+  final ChoicePackageController c = Get.find<ChoicePackageController>();
+  final BookingController bookingController = Get.find<BookingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +62,16 @@ class ChoicePackageScreen extends StatelessWidget {
                 return const Center(child: Text("No packages available"));
               }
 
-              // Use the first package (same as your original assumption)
               final package = c.packages[0];
               final pkg = package.bagCategory;
 
-              // Build dynamic list from API (small / medium / large)
               final List<BagOption> allBags = [];
 
               if (pkg?.small != null && pkg!.small!.isNotEmpty) {
                 for (var b in pkg.small!) {
                   allBags.add(BagOption(
                     name: "Small",
+                    id: b.id ?? '',
                     weight: "${b.kg ?? ''} kg",
                     price: b.price ?? 0,
                     serviceFee: b.serviceFee ?? 0,
@@ -83,6 +84,7 @@ class ChoicePackageScreen extends StatelessWidget {
                 for (var b in pkg.medium!) {
                   allBags.add(BagOption(
                     name: "Medium",
+                    id: b.id ?? '',
                     weight: "${b.kg ?? ''} kg",
                     price: b.price ?? 0,
                     serviceFee: b.serviceFee ?? 0,
@@ -95,6 +97,7 @@ class ChoicePackageScreen extends StatelessWidget {
                 for (var b in pkg.large!) {
                   allBags.add(BagOption(
                     name: "Large",
+                    id: b.id ?? '',
                     weight: "${b.kg ?? ''} kg",
                     price: b.price ?? 0,
                     serviceFee: b.serviceFee ?? 0,
@@ -103,60 +106,146 @@ class ChoicePackageScreen extends StatelessWidget {
                 }
               }
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 24.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: Text(
-                        'Choose Your Bag',
-                        style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF333333)),
+              return Column(
+                children: [
+                  // Selected bags summary
+                  Obx(() {
+                    if (bookingController.selectedBags.isEmpty) {
+                      return SizedBox.shrink();
+                    }
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.mainAppColor.withOpacity(0.1),
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.mainAppColor.withOpacity(0.2)),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Bag Options (dynamic)
-                    ...allBags.map((bag) => _buildBagItem(context, bag)),
-
-                    SizedBox(height: 24.h),
-
-                    // Continue Button
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (c.validateSelection()) {
-                            Get.toNamed(AppRoutes.informationScreen);
-                          }
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.mainAppColor,
-                            borderRadius: BorderRadius.circular(8.r),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${bookingController.selectedBags.length} type${bookingController.selectedBags.length > 1 ? 's' : ''} of bag${bookingController.selectedBags.length > 1 ? 's' : ''} selected',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.mainAppColor,
+                                ),
+                              ),
+                              Text(
+                                'Total: \$${bookingController.getTotalPrice()}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF666666),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: Center(
+                          GestureDetector(
+                            onTap: () {
+                              bookingController.clearAllBags();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                              decoration: BoxDecoration(
+                                color: AppColors.mainAppColor,
+                                borderRadius: BorderRadius.circular(6.r),
+                              ),
+                              child: Text(
+                                'Clear All',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
+                  // Bag list
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 24.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Text(
-                              'Continue',
+                              'Choose Your Bags',
                               style: GoogleFonts.inter(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white),
+                                  color: Color(0xFF333333)),
                             ),
                           ),
-                        ),
+                          SizedBox(height: 16.h),
+
+                          ...allBags.map((bag) => _buildBagItem(context, bag)),
+
+                          SizedBox(height: 24.h),
+                        ],
                       ),
                     ),
+                  ),
 
-                    SizedBox(height: 40.h),
-                  ],
-                ),
+                  // Continue Button (sticky at bottom)
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(top: BorderSide(color: Color(0xFFE5E5E5))),
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        if (c.validateSelection()) {
+                          Get.toNamed(
+                            AppRoutes.informationScreen,
+                          );
+                        }
+                      },
+                      child: Obx(() {
+                        final totalBags = bookingController.getTotalBags();
+
+                        return Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          decoration: BoxDecoration(
+                            color: bookingController.selectedBags.isNotEmpty
+                                ? AppColors.mainAppColor
+                                : Color(0xFFE5E5E5),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  bookingController.selectedBags.isEmpty
+                                      ? 'Select bags to continue'
+                                      : 'Continue with $totalBags bag${totalBags > 1 ? 's' : ''}',
+                                  style: GoogleFonts.inter(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: bookingController.selectedBags.isNotEmpty
+                                          ? Colors.white
+                                          : Color(0xFF999999)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
               );
             }),
           ),
@@ -166,38 +255,28 @@ class ChoicePackageScreen extends StatelessWidget {
   }
 
   Widget _buildBagItem(BuildContext context, BagOption bag) {
-    final localBag = BagOption(
-      name: bag.name,
-      weight: bag.weight,
-      price: bag.price,
-      serviceFee: bag.serviceFee,
-      description: bag.description,
-    );
-
     return Obx(() {
-      // isSelected compares controller.selected by name+weight
-      final selected = c.selectedBag.value;
-      final bool isSelected = selected != null && selected.name == localBag.name && selected.weight == localBag.weight;
+      final isSelected = bookingController.selectedBags.containsKey(bag.id);
+      final bagSelection = bookingController.selectedBags[bag.id];
+      final quantity = bagSelection?.quantity ?? 1;
 
       return GestureDetector(
         onTap: () {
           if (isSelected) {
-            // already selected — but still call select to update reference
-            c.selectBag(selected!);
+            bookingController.removeBag(bag.id);
           } else {
-            // preserve quantity if same type exists in selected
-            if (c.selectedBag.value != null &&
-                c.selectedBag.value!.name == localBag.name &&
-                c.selectedBag.value!.weight == localBag.weight) {
-              // transfer quantity
-              localBag.quantity.value = c.selectedBag.value!.quantity.value;
-            }
-            c.selectBag(localBag);
+            bookingController.addBagSelection(
+              bag.id,
+              bag.name,
+              bag.weight,
+              bag.price,
+              1,
+            );
           }
         },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8.r),
@@ -229,7 +308,7 @@ class ChoicePackageScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          localBag.name,
+                          bag.name,
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -238,7 +317,7 @@ class ChoicePackageScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          localBag.weight,
+                          bag.weight,
                           style: GoogleFonts.inter(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w400,
@@ -249,87 +328,88 @@ class ChoicePackageScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // Quantity Selector
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFFE5E5E5)),
-                        borderRadius: BorderRadius.circular(8.r)),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (localBag.quantity.value > 1) localBag.quantity.value--;
-                          },
-                          child: Container(
-                            width: 36.w,
-                            height: 36.h,
-                            alignment: Alignment.center,
-                            child: Icon(Icons.remove,
-                                size: 18.sp,
-                                color: localBag.quantity.value > 1
-                                    ? Color(0xFF1F1D1D)
-                                    : Color(0xFFC8CACC)),
+                  // Quantity Selector (only show when selected)
+                  if (isSelected)
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Color(0xFFE5E5E5)),
+                          borderRadius: BorderRadius.circular(8.r)),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (quantity > 1) {
+                                bookingController.updateBagQuantity(bag.id, quantity - 1);
+                              } else {
+                                bookingController.removeBag(bag.id);
+                              }
+                            },
+                            child: Container(
+                              width: 36.w,
+                              height: 36.h,
+                              alignment: Alignment.center,
+                              child: Icon(Icons.remove,
+                                  size: 18.sp,
+                                  color: quantity > 1
+                                      ? Color(0xFF1F1D1D)
+                                      : Color(0xFFC8CACC)),
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: 40.w,
-                          alignment: Alignment.center,
-                          child: Obx(() => Text('${localBag.quantity.value}',
-                              style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1F1D1D)))),
-                        ),
-                        GestureDetector(
-                          onTap: () => localBag.quantity.value++,
-                          child: Container(
-                            width: 36.w,
-                            height: 36.h,
+                          Container(
+                            width: 40.w,
                             alignment: Alignment.center,
-                            child: Icon(Icons.add,
-                                size: 18.sp, color: Color(0xFF1F1D1D)),
+                            child: Text('$quantity',
+                                style: GoogleFonts.inter(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF1F1D1D))),
                           ),
-                        ),
-                      ],
+                          GestureDetector(
+                            onTap: () => bookingController.updateBagQuantity(bag.id, quantity + 1),
+                            child: Container(
+                              width: 36.w,
+                              height: 36.h,
+                              alignment: Alignment.center,
+                              child: Icon(Icons.add,
+                                  size: 18.sp, color: Color(0xFF1F1D1D)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  SizedBox(width: 16.w),
+                  SizedBox(width: isSelected ? 16.w : 0),
 
                   // Price
-                  Obx(() {
-                    // Show price for controller selected bag if it's this one (so total updates when selecting)
-                    final selected = c.selectedBag.value;
-                    if (selected != null &&
-                        selected.name == localBag.name &&
-                        selected.weight == localBag.weight) {
-                      return Text(
-                        '\$${selected.totalPrice}',
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '\$${bag.price}',
                         style: GoogleFonts.inter(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF1F1D1D),
                         ),
-                      );
-                    }
-
-                    // otherwise show local bag price
-                    return Text(
-                      '\$${localBag.totalPrice}',
-                      style: GoogleFonts.inter(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1F1D1D),
                       ),
-                    );
-                  }),
+                      if (isSelected && quantity > 1)
+                        Text(
+                          '\$${bag.price * quantity}',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.mainAppColor,
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
 
               SizedBox(height: 12.h),
 
               Text(
-                localBag.description,
+                bag.description,
                 style: GoogleFonts.inter(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,

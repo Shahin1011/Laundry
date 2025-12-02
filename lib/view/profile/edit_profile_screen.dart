@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:laundry/view/profile/profile_screen.dart';
 import '../../controller/profile/edit_profile_controller.dart';
 import '../../controller/profile/profile_controller.dart';
 import '../../helpers/route.dart';
@@ -92,7 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           colorText: Colors.white,
         );
 
-        Get.back();
+        Get.off(() => ProfileScreen());
       } else {
         Get.snackbar(
           "Error",

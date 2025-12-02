@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../controller/home/booking_controller.dart';
 import '../../utils/app_colors.dart';
+import 'package:get/get.dart';
+
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -12,7 +15,18 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String? selectedMethod; // 'stripe' or 'cash'
+
+  String? selectedMethod;
+  final BookingController bookingController = Get.find<BookingController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize from booking controller if already selected
+    if (bookingController.paymentMethod.value.isNotEmpty) {
+      selectedMethod = bookingController.paymentMethod.value;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +70,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               color: Colors.white,
               child: Row(
                 children: [
-                  _buildProgressStep('Information', 1, isCompleted: true),
+                  _buildProgressStep('Information', 1, isActive: true, isCompleted: true),
                   _buildProgressLine(true),
-                  _buildProgressStep('date & time', 2, isCompleted: true),
+                  _buildProgressStep('date & time', 2, isActive: true, isCompleted: true),
                   _buildProgressLine(true),
-                  _buildProgressStep('Payment', 3, isActive: true),
+                  _buildProgressStep('Payment', 3, isActive: false),
                 ],
               ),
             ),
@@ -111,11 +125,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     SizedBox(height: 24.h),
 
                     GestureDetector(
-                      onTap: () {
+                      onTap: ()async{
+                        if (selectedMethod == null) {
+                          Get.snackbar('Error', 'Please select a payment method');
+                          return;
+                        }
+
+                        // Save payment method
+                        bookingController.paymentMethod.value = selectedMethod!;
+
+                        // Handle based on payment method
                         if (selectedMethod == 'cash') {
-                          Navigator.of(context).pushNamed('/success_screen');
+                          // Submit booking for cash payment
+                          final result = await bookingController.submitBooking();
+
+                          if (result['success']) {
+                            Navigator.of(context).pushNamed('/success_screen');
+                          } else {
+                            Get.snackbar('Booking Failed', result['message'] ?? 'Unknown error');
+                          }
                         } else if (selectedMethod == 'stripe') {
-                          Navigator.of(context).pushNamed('/stripe_payment_screen');
+                          Navigator.of(context).pushNamed(
+                            '/stripe_payment_screen',
+                            arguments: {
+                              'bookingData': bookingController.prepareBookingData(),
+                              'totalAmount': bookingController.getTotalPrice() + 2.00,
+                            },
+                          );
                         }
                       },
                       child: Container(
@@ -146,7 +182,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  // Update booking summary
   Widget _buildSummaryCard() {
+    final selectedBags = bookingController.selectedBags;
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -155,42 +194,93 @@ class _PaymentScreenState extends State<PaymentScreen> {
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _summaryRow('Price per bag', '\$35'),
-          SizedBox(height: 20.h),
-          _summaryRow('Number of bag', '1'),
+          // Price per bag section
+          if (selectedBags.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Price per bag",
+                  style: GoogleFonts.inter(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1F1D1D),
+                  ),
+                ),
+                SizedBox(height: 15.h),
+                ...selectedBags.entries.map((entry) {
+                  final bag = entry.value;
+                  return Padding(
+                    padding:  EdgeInsets.only(bottom: 10.h),
+                    child: _summaryRow(bag.name, '\$${bag.price}'),
+                  );
+                }).toList(),
+              ],
+            ),
+
+          // Number of bag section
+          if (selectedBags.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.h),
+                Text(
+                  "Number of bag",
+                  style: GoogleFonts.inter(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1F1D1D),
+                  ),
+                ),
+                SizedBox(height: 15.h),
+                ...selectedBags.entries.map((entry) {
+                  final bag = entry.value;
+                  return Padding(
+                    padding:  EdgeInsets.only(bottom: 10.h),
+                    child: _summaryRow(bag.name, '${bag.quantity}'),
+                  );
+                }).toList(),
+              ],
+            ),
+
+          // Service fee (you can make this dynamic too if needed)
           SizedBox(height: 20.h),
           _summaryRow('Service fee', '\$2.00'),
           SizedBox(height: 20.h),
           const Divider(height: 1, color: Color(0xFFE5E5E5)),
           SizedBox(height: 20.h),
-          _summaryRow('Total Payable', '\$37.00', isBold: true),
+          _summaryRow('Total Payable', '\$${bookingController.getTotalPrice() + 2.00}', isBold: true),
         ],
       ),
     );
   }
 
   Widget _summaryRow(String label, String value, {bool isBold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 14.sp,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-            color: const Color(0xFF1F1D1D),
+    return Padding(
+      padding: const EdgeInsets.only(left: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 14.sp,
+              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+              color: const Color(0xFF1F1D1D),
+            ),
           ),
-        ),
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            fontSize: 14.sp,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w600,
-            color: const Color(0xFF1F1D1D),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 14.sp,
+              fontWeight: isBold ? FontWeight.w700 : FontWeight.w600,
+              color: const Color(0xFF1F1D1D),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -289,24 +379,5 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
-class _BottomNavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-  const _BottomNavItem({required this.icon, required this.label, this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    final Color color = isActive ? AppColors.mainAppColor : const Color(0xFF757575);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24.sp),
-        SizedBox(height: 4.h),
-        Text(label, style: GoogleFonts.inter(fontSize: 12.sp, fontWeight: FontWeight.w500, color: color)),
-      ],
-    );
-  }
-}
 
 

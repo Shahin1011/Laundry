@@ -6,40 +6,95 @@ import 'dart:convert';
 import '../../model/choice_package_model.dart';
 import '../../utils/app_contants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
+import 'booking_controller.dart';
 
 class ChoicePackageController extends GetxController {
   RxBool isLoading = true.obs;
   var errorMessage = ''.obs;
   RxList<Data> packages = <Data>[].obs;
 
-  // For selected bag
-  var selectedBag = Rxn<BagOption>();
+  // For multiple selected bags - store in a map with bag id as key
+  var selectedBags = <String, BagSelection>{}.obs;
 
   final String packageUrl = "${AppConstants.BASE_URL}/api/packages";
+
   @override
   void onInit() {
     fetchPackages();
     super.onInit();
   }
 
+  final BookingController bookingController = Get.find<BookingController>();
 
+  void toggleBagSelection(BagOption bag) {
+    final bagId = bag.id;
 
-  void selectBag(BagOption bag) {
-    selectedBag.value = bag;
-    print("Selected Bag => ${bag.name}, Price => ${bag.price}, Qty => ${bag.quantity.value}");
+    if (bookingController.selectedBags.containsKey(bagId)) {
+      // Remove from booking controller
+      bookingController.removeBag(bagId);
+    } else {
+      // Add to booking controller with quantity 1
+      bookingController.addBagSelection(
+        bagId,
+        bag.name,
+        bag.weight,
+        bag.price,
+        1,
+      );
+    }
+
+    printSelectedBags();
   }
+
+  void updateBagQuantity(String bagId, int newQuantity) {
+    if (bookingController.selectedBags.containsKey(bagId)) {
+      bookingController.updateBagQuantity(bagId, newQuantity);
+    }
+  }
+
+  bool isBagSelected(String bagId) {
+    return bookingController.selectedBags.containsKey(bagId);
+  }
+
+  BagSelection? getBagSelection(String bagId) {
+    return bookingController.selectedBags[bagId];
+  }
+
+  void printSelectedBags() {
+    print("=== Selected Bags ===");
+    bookingController.selectedBags.forEach((id, bag) {
+      print(
+          "Bag ID: $id, "
+              "Name: ${bag.name}, "
+              "Quantity: ${bag.quantity}, "
+              "Price per bag: ${bag.price}, "
+              "Total: ${bag.totalPrice}"
+      );
+    });
+    print("====================");
+  }
+
+  // Update validation to use booking controller
   bool validateSelection() {
-    if (selectedBag.value == null) {
+    if (bookingController.selectedBags.isEmpty) {
       Get.snackbar(
         "No Bag Selected",
-        "Please select a bag before continuing.",
+        "Please select at least one bag before continuing.",
         backgroundColor: Color(0xFFFF5656),
         colorText: AppColors.white,
       );
       return false;
     }
     return true;
+  }
+
+  // Get total from booking controller
+  double getTotalPrice() {
+    return bookingController.getTotalPrice();
+  }
+
+  int getTotalBags() {
+    return bookingController.getTotalBags();
   }
 
 
@@ -61,7 +116,6 @@ class ChoicePackageController extends GetxController {
         var jsonData = json.decode(response.body);
         ChoicePackageModel model = ChoicePackageModel.fromJson(jsonData);
         packages.value = model.data ?? [];
-
       } else {
         errorMessage.value = "Failed: ${response.statusCode}";
       }
@@ -78,22 +132,20 @@ class ChoicePackageController extends GetxController {
   }
 }
 
-
 class BagOption {
+  String id;
   String name;
   String weight;
   int price;
   int serviceFee;
   String description;
-  RxInt quantity = 1.obs;
 
   BagOption({
+    required this.id,
     required this.name,
     required this.weight,
     required this.price,
     required this.serviceFee,
     required this.description,
   });
-
-  int get totalPrice => (price * quantity.value);
 }

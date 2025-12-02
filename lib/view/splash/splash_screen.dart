@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:laundry/utils/app_colors.dart';
 import 'package:get/get.dart';
-
 import '../../helpers/route.dart';
+import '../../utils/token_service.dart';
+
 
 class SplashScreen extends StatefulWidget{
   const SplashScreen({super.key});
@@ -20,10 +21,20 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 3), () {
-        Get.offAllNamed(AppRoutes.onboardingScreen);
-      });
+      _checkAuthAndNavigate();
     });
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    final token = await TokenService().getToken();
+
+    if (token != null && token.isNotEmpty) {
+      Get.offAllNamed(AppRoutes.bottomNavScreen);
+    } else {
+      Get.offAllNamed(AppRoutes.onboardingScreen);
+    }
   }
 
   @override
