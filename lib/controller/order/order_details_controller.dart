@@ -52,8 +52,44 @@ class OrderDetailsController extends GetxController {
     }
   }
 
+
+  /// For CanelOrder
+  Future<void> cancelOrder(String orderId) async {
+    if (!await _hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your connection.");
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      final token = await TokenService().getToken();
+      final url = "${AppConstants.BASE_URL}/api/orders/$orderId/cancel";
+      final response = await http.patch(
+        Uri.parse(url),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", "Order cancelled successfully");
+        // Refresh order details
+        fetchOrderDetails(orderId);
+      } else {
+        Get.snackbar("Failed", "Failed to cancel order: ${response.statusCode}");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<bool> _hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
   }
+
 }

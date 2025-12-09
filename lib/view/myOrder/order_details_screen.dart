@@ -401,7 +401,34 @@ class OrderDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.040),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.030),
+                    if (data.status?.toLowerCase() == "pending")
+                      GestureDetector(
+                        onTap: () async {
+                          await c.cancelOrder(orderId);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          decoration: BoxDecoration(
+                            color: Colors.red, // You can make it red to indicate cancel
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Cancel Order",
+                              style: GoogleFonts.inter(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.040),
 
                   ],
                 ),

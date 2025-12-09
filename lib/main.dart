@@ -1,15 +1,30 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:laundry/firebase_options.dart';
+import 'package:laundry/services/firebase_messaging_service.dart';
+import 'package:laundry/services/local_notifications_service.dart';
 import 'package:laundry/utils/token_service.dart';
 import 'controller/home/booking_controller.dart';
 import 'controller/home/choice_package_controller.dart';
 import 'controller/profile/profile_controller.dart';
 import 'helpers/route.dart';
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  final localNotificationsService =  LocalNotificationsService.instance();
+  await localNotificationsService.init();
+
+  final firebaseMessagingService =  FirebaseMessagingService.instance();
+  await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+
+
   await TokenService().init();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

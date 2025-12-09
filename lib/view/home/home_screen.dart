@@ -63,15 +63,18 @@ class HomeScreen extends StatelessWidget {
                         return Center(child: Text(c.errorMessage.value));
                       }
 
-                      // Filter: Remove completed orders
-                      final filteredOrders = c.orders
-                          .where((order) =>
-                      order.status?.toLowerCase() != "completed")
-                          .toList();
+                      // Filter: Remove completed and cancelled orders
+                      final filteredOrders = c.orders.where(
+                              (order) {
+                            final status = order.status?.toLowerCase() ?? "";
+                            return status != "completed" && status != "cancelled";
+                          }
+                      ).toList();
 
                       if (filteredOrders.isEmpty) {
                         return const Center(
-                            child: Text("No ongoing orders found"));
+                            child: Text("No ongoing orders found"),
+                        );
                       }
 
                       return ListView.builder(

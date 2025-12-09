@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:laundry/helpers/route.dart';
 import 'package:laundry/utils/app_colors.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/notification/notification_controller.dart';
+
 class NotificationCard extends StatelessWidget{
   final String timeAndDate;
+  final String title;
   final String description;
+  final String notificationId;
 
-  const NotificationCard({super.key, required this.timeAndDate, required this.description,});
+  const NotificationCard({super.key, required this.timeAndDate, required this.description, required this.title, required this.notificationId});
 
 
   @override
@@ -33,23 +36,20 @@ class NotificationCard extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.mainAppColor, width: 1.5),
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage("assets/images/profileImg.png"),
-            ),
-          ),
-
-          SizedBox(width: 11.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.mainAppColor,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
                 Text(
                   description,
                   style: GoogleFonts.inter(
@@ -67,7 +67,7 @@ class NotificationCard extends StatelessWidget{
                   style: GoogleFonts.inter(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF5E5E5E),
+                    color: AppColors.mainAppColor,
                   ),
                 ),
 
@@ -146,7 +146,10 @@ class NotificationCard extends StatelessWidget{
                   SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: ()async{
+                         await Get.find<NotificationsController>().deleteNotification(notificationId);
+                         Navigator.of(context).pop();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
@@ -168,7 +171,6 @@ class NotificationCard extends StatelessWidget{
                   ),
                 ],
               ),
-
             ],
           ),
         ),

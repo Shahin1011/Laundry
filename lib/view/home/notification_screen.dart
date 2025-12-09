@@ -3,11 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:laundry/view/home/widgets/notification_card.dart';
-import 'package:laundry/view/myOrder/widgets/my_order_card.dart';
+import 'package:laundry/view/home/widgets/shimmer_notification_card.dart';
+import 'package:laundry/view/home/widgets/time_ago.dart';
+import '../../controller/notification/notification_controller.dart';
 import '../../utils/app_colors.dart';
+import 'package:get/get.dart';
+
+
 
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({super.key});
+   NotificationScreen({super.key});
+
+   final controller = Get.put(NotificationsController());
 
   @override
   Widget build(BuildContext context) {
@@ -49,20 +56,47 @@ class NotificationScreen extends StatelessWidget {
             ),
           ),
 
-          // 🔹 Order List (Expanded must be direct child of Column)
+          // 🔹 Notification List
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: ListView.builder(
-                padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-                itemCount: 20,
-                itemBuilder: (context, index) {
-                  return NotificationCard(
-                    timeAndDate: '1 day ago',
-                    description: 'Your delivery has been successfully completed!',
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return ListView.builder(
+                    itemCount: 6,
+                    padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                    itemBuilder: (_, index) => const ShimmerNotificationCard(),
                   );
-                },
-              ),
+                }
+
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      controller.errorMessage.value,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                if (controller.notificationsList.isEmpty) {
+                  return const Center(child: Text("No notifications found"));
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                  itemCount: controller.notificationsList.length,
+                  itemBuilder: (context, index) {
+                    final n = controller.notificationsList[index];
+
+                    return NotificationCard(
+                      timeAndDate: formatNotificationTime(n.updatedAt),
+                      description: n.message ?? "",
+                      title: n.title ?? "",
+                      notificationId: n.id!,
+                    );
+                  },
+                );
+              }),
             ),
           ),
         ],

@@ -89,9 +89,19 @@ class MyOrderCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: status.toLowerCase() == "completed"
+                  color: status.toLowerCase() == "cancelled"
+                      ? Colors.red
+                      : status.toLowerCase() == "completed"
                       ? Color(0xFF45DE6E)
-                      : Color(0xFF9A9A10),
+                      : status.toLowerCase() == "pending"
+                      ? Colors.orange
+                      : status.toLowerCase() == "pickup"
+                      ? Colors.blue
+                      : status.toLowerCase() == "washing"
+                      ? Colors.purple
+                      : status.toLowerCase() == "delivery"
+                      ? Colors.teal
+                      : Colors.grey,
                 ),
               ),
             ],
