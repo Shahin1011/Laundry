@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import '../../controller/home/booking_controller.dart';
+import '../../controller/home/choice_package_controller.dart';
 import '../../controller/order/orders_controller.dart';
+import '../../controller/profile/profile_controller.dart';
 import '../../utils/app_colors.dart';
 import 'widgets/home_header_widget.dart';
 import 'widgets/laundry_service_card.dart';
@@ -10,10 +13,20 @@ import 'widgets/recent_order_card.dart';
 
 
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
   final OrdersController c = Get.put(OrdersController());
+  final ProfileController profileController = Get.put(ProfileController());
+  final BookingController controller1= Get.put(BookingController());
+  final ChoicePackageController controller2 = Get.put(ChoicePackageController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +36,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           // Header
           HomeHeaderWidget(),
-          
+
           // Content
           Expanded(
             child: SingleChildScrollView(
@@ -34,9 +47,9 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   // Laundry Service Card
                   LaundryServiceCard(),
-                  
+
                   SizedBox(height: 15.h),
-                  
+
                   // Recent Order Title
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -50,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 15.h),
-                  
+
                   // Recent Order Card
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 0.0),
@@ -120,5 +133,4 @@ class HomeScreen extends StatelessWidget {
         return 0.0;
     }
   }
-
 }

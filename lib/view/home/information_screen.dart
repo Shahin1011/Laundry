@@ -22,14 +22,13 @@ class _InformationScreenState extends State<InformationScreen> {
   final ProfileController c = Get.find<ProfileController>();
   final BookingController bookingController = Get.find<BookingController>();
 
-
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController zipCodeController = TextEditingController();
-  
+
   String selectedState = 'Alabama';
 
   @override
@@ -46,14 +45,29 @@ class _InformationScreenState extends State<InformationScreen> {
   @override
   void initState() {
     super.initState();
-    // Prefill controllers
-    fullNameController.text = c.profile.value!.fullname;
-    emailController.text = c.profile.value!.email;
 
-    // Save to booking controller
-    bookingController.fullName.value = c.profile.value!.fullname;
-    bookingController.email.value = c.profile.value!.email;
+    // Safe initial fill (only if profile exists)
+    if (c.profile.value != null) {
+      fullNameController.text = c.profile.value!.fullname ?? '';
+      emailController.text = c.profile.value!.email ?? '';
+
+      bookingController.fullName.value = c.profile.value!.fullname ?? '';
+      bookingController.email.value = c.profile.value!.email ?? '';
+    }
+
+    // Update controllers automatically when profile changes
+    ever(c.profile, (profile) {
+      if (profile != null) {
+        fullNameController.text = profile.fullname ?? '';
+        emailController.text = profile.email ?? '';
+
+        bookingController.fullName.value = profile.fullname ?? '';
+        bookingController.email.value = profile.email ?? '';
+      }
+    });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +104,7 @@ class _InformationScreenState extends State<InformationScreen> {
                 ],
               ),
             ),
-            
+
             // Progress Indicator
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
@@ -105,7 +119,7 @@ class _InformationScreenState extends State<InformationScreen> {
                 ],
               ),
             ),
-            
+
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -119,9 +133,9 @@ class _InformationScreenState extends State<InformationScreen> {
                       label: 'Full Name',
                       controller: fullNameController,
                     ),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // Email
                     _buildTextField(
                       label: 'Email',
@@ -129,9 +143,9 @@ class _InformationScreenState extends State<InformationScreen> {
                       hintText: 'example@email.com',
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // Phone
                     IntlPhoneField(
                       controller: phoneController,
@@ -162,40 +176,40 @@ class _InformationScreenState extends State<InformationScreen> {
                         print(phone.completeNumber);
                       },
                     ),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // Address
                     _buildTextField(
                       label: 'Address',
                       controller: addressController,
                       isAddress: false,
                     ),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // City
                     _buildTextField(
                       label: 'City',
                       controller: cityController,
                     ),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // State Dropdown
                     _buildStateDropdown(),
-                    
+
                     SizedBox(height: 16.h),
-                    
+
                     // Zip Code
                     _buildTextField(
                       label: 'Zip Code',
                       controller: zipCodeController,
                       keyboardType: TextInputType.number,
                     ),
-                    
+
                     SizedBox(height: 32.h),
-                    
+
                     // Continue Button
                     GestureDetector(
                       onTap: () {
@@ -256,7 +270,7 @@ class _InformationScreenState extends State<InformationScreen> {
                         ),
                       ),
                     ),
-                    
+
                     SizedBox(height: 40.h),
                   ],
                 ),
@@ -270,7 +284,7 @@ class _InformationScreenState extends State<InformationScreen> {
   Widget _buildProgressStep(String label, int step, {required bool isActive, bool isCompleted = false}) {
     Color circleColor = isActive ? AppColors.mainAppColor : (isCompleted ? Color(0xFFE5E5E5) : Color(0xFFE5E5E5));
     Color textColor = isActive ? AppColors.mainAppColor : Color(0xFF757575);
-    
+
     return Expanded(
       child: Column(
         children: [
@@ -466,15 +480,15 @@ class _InformationScreenState extends State<InformationScreen> {
   void _showStatePicker() {
     final List<String> states = [
       'Select',
-      'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
-      'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 
-      'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
-      'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 
-      'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 
-      'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 
+      'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
+      'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa',
+      'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan',
+      'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+      'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma',
+      'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
       'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
     ];
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -530,7 +544,7 @@ class _InformationScreenState extends State<InformationScreen> {
     required bool isActive,
   }) {
     final Color color = isActive ? AppColors.mainAppColor : Color(0xFF757575);
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:laundry/view/myOrder/myOreder_screen.dart';
 import 'package:laundry/view/profile/profile_screen.dart';
+import '../../controller/home/booking_controller.dart';
+import '../../controller/home/choice_package_controller.dart';
+import '../../controller/profile/profile_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_icons.dart';
 import '../home/home_screen.dart';
-
-
-
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
@@ -32,19 +33,17 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
      ProfileScreen(),
 
   ];
-
-  // Create nav items in a getter
   List<BottomNavigationBarItem> get _navItems => [
     _navItem(AppIcons.homeNavIcon, "Home", 0),
     _navItem(AppIcons.myOrederICon, "My Order", 1),
     _navItem(AppIcons.profileIcon, "Profile", 2),
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[selectedIndex],
-
       // 🎯 MODIFICATION: Wrap the BottomNavigationBar in a SizedBox
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

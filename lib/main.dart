@@ -32,9 +32,9 @@ void main() async {
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
   ));
+
   Get.put(BookingController());
   Get.put(ChoicePackageController());
-  Get.put(ProfileController());
 
   runApp(const MyApp());
 }
@@ -69,4 +69,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

@@ -21,6 +21,8 @@ class ProfileController extends GetxController {
     fetchProfile();
   }
 
+
+
   Future<bool> hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
@@ -69,7 +71,6 @@ class ProfileController extends GetxController {
 
   Future<void> logout() async {
     await TokenService().clearToken();
-
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove("email");
     await prefs.remove("password");

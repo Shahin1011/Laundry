@@ -75,7 +75,6 @@ class AppRoutes {
     GetPage(name: paymentScreen, page: () => PaymentScreen()),
     GetPage(name: successScreen, page: () => SuccessScreen()),
     GetPage(name: stripePaymentScreen, page: () => StripePaymentScreen()),
-
     GetPage(name: editProfileScreen, page: () => EditProfileScreen()),
     GetPage(name: helpAndSupportScreen, page: () => HelpAndSupportScreen()),
     GetPage(name: contractUsScreen, page: () => ContractUsScreen()),
